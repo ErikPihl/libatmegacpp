@@ -28,3 +28,6 @@
 # Ignore vscode directory.
 *vscode/
 *vs/
+
+# Ignore debug folder.
+*Debug/
