@@ -18,8 +18,8 @@ driver/atmega328p/source/watchdog.d driver/atmega328p/source/watchdog.o: \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stdarg.h \
  ../utils/include/utils/type_traits.h \
  ../utils/include/utils/impl/utils_impl.h \
- ../driver/atmega328p/include/driver/atmega328p/watchdog.h \
- ../driver/include/driver/watchdog/interface.h
+ ../driver/atmega328p/include/driver/watchdog/atmega328p.h \
+ ../driver/interface/include/driver/watchdog/interface.h
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h:
 
@@ -57,6 +57,6 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\
 
 ../utils/include/utils/impl/utils_impl.h:
 
-../driver/atmega328p/include/driver/atmega328p/watchdog.h:
+../driver/atmega328p/include/driver/watchdog/atmega328p.h:
 
-../driver/include/driver/watchdog/interface.h:
+../driver/interface/include/driver/watchdog/interface.h:

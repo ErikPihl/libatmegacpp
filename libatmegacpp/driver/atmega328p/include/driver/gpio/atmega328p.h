@@ -9,14 +9,14 @@
 
 namespace driver 
 {
-namespace atmega328p
+namespace gpio
 {
 /**
  * @brief GPIO driver for ATmega328P.
  * 
  *        This class is non-copyable and non-movable.
  */
-class Gpio final : public GpioInterface
+class Atmega328p final : public Interface
 {
 public:
     /** Port aliases for GPIO pins. */
@@ -35,13 +35,13 @@ public:
      * @param[in] direction The GPIO direction.
      * @param[in] callback Callback associated with the GPIO (default = none).
      */
-    explicit Gpio(const uint8_t pin, const Direction direction, 
+    explicit Atmega328p(const uint8_t pin, const Direction direction, 
         void (*callback)() = nullptr) noexcept;
 
     /**
      * @brief Delete the GPIO.
      */
-    ~Gpio() noexcept override;
+    ~Atmega328p() noexcept override;
 
     /**
      * @brief Get the pin number of the GPIO.
@@ -118,11 +118,11 @@ public:
      */
     void blink(const uint16_t& blinkSpeed_ms) noexcept;
     
-    Gpio()                       = delete; // No default constructor.
-    Gpio(const Gpio&)            = delete; // No copy constructor.
-    Gpio(Gpio&&)                 = delete; // No move constructor.
-    Gpio& operator=(const Gpio&) = delete; // No copy assignment.
-    Gpio& operator=(Gpio&&)      = delete; // No move assignment.
+    Atmega328p()                             = delete; // No default constructor.
+    Atmega328p(const Atmega328p&)            = delete; // No copy constructor.
+    Atmega328p(Atmega328p&&)                 = delete; // No move constructor.
+    Atmega328p& operator=(const Atmega328p&) = delete; // No copy assignment.
+    Atmega328p& operator=(Atmega328p&&)      = delete; // No move assignment.
 
 private:
     /** GPIO hardware structure. */
@@ -159,7 +159,7 @@ private:
  * 
  *        - Pins 14 - 19 are associated with I/O port C.
  */
-struct Gpio::Port 
+struct Atmega328p::Port 
 {
     static constexpr uint8_t D0{0};  // PORTD0 = pin 0.
     static constexpr uint8_t D1{1};  // PORTD1 = pin 1.
@@ -188,7 +188,7 @@ struct Gpio::Port
 /**
  * @brief Enumeration of GPIO directions.
  */
-enum class Gpio::Direction : uint8_t
+enum class Atmega328p::Direction : uint8_t
 { 
     Input,       // Input without internal pull-up resistor enabled (tri-state).
     InputPullup, // Input with internal pull-up resistor enabled.
@@ -199,12 +199,12 @@ enum class Gpio::Direction : uint8_t
 /**
  * @brief Enumeration of I/O ports.
 */
-enum class Gpio::IoPort : uint8_t
+enum class Atmega328p::IoPort : uint8_t
 {
     B,     // I/O port B.
     C,     // I/O port C.
     D,     // I/O port D.
     Count, // The number of I/O ports available.
 };
-} // namespace atmega328p
+} // namespace gpio
 } // namespace driver

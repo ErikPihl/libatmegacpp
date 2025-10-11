@@ -9,16 +9,18 @@
 
 namespace driver 
 {
+namespace eeprom
+{
 /**
  * @brief EEPROM (Electrically Erasable Programmable ROM) stream interface.
  */
-class EepromInterface
+class Interface
 {
 public:
     /**
      * @brief Delete the EEPROM stream.
      */
-    virtual ~EepromInterface() noexcept = default;
+    virtual ~Interface() noexcept = default;
 
     /**
      * @brief Check whether the EEPROM stream is initialized.
@@ -77,7 +79,7 @@ private:
 
 // -----------------------------------------------------------------------------
 template <typename T>
-bool EepromInterface::write(const uint16_t address, const T& data) const noexcept
+bool Interface::write(const uint16_t address, const T& data) const noexcept
 {
     // Generate a compiler error if the given type isn't of unsigned type.
     static_assert(type_traits::is_unsigned<T>::value, 
@@ -97,7 +99,7 @@ bool EepromInterface::write(const uint16_t address, const T& data) const noexcep
 
 // -----------------------------------------------------------------------------
 template <typename T>
-bool EepromInterface::read(const uint16_t address, T& data) const noexcept
+bool Interface::read(const uint16_t address, T& data) const noexcept
 {
     // Generate a compiler error if the given type isn't of unsigned type.
     static_assert(type_traits::is_unsigned<T>::value, 
@@ -115,4 +117,5 @@ bool EepromInterface::read(const uint16_t address, T& data) const noexcept
     // Return true to indicate success.
     return true;
 }
+} // namespace eeprom
 } // namespace driver

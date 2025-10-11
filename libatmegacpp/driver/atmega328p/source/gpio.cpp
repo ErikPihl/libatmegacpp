@@ -3,13 +3,13 @@
  */
 #include <avr/interrupt.h>
 
-#include "driver/atmega328p/gpio.h"
+#include "driver/gpio/atmega328p.h"
 #include "utils/callback_array.h"
 #include "utils/utils.h"
 
 namespace driver 
 {
-namespace atmega328p
+namespace gpio
 {
 namespace
 {
@@ -70,19 +70,19 @@ constexpr bool isPinReserved(const uint8_t pin) noexcept
 // -----------------------------------------------------------------------------
 constexpr bool isPinConnectedToPortB(const uint8_t pin) noexcept
 {
-    return utils::inRange(pin, Gpio::Port::B0, Gpio::Port::B5);
+    return utils::inRange(pin, Atmega328p::Port::B0, Atmega328p::Port::B5);
 }
 
 // -----------------------------------------------------------------------------
 constexpr bool isPinConnectedToPortC(const uint8_t pin) noexcept
 {
-    return utils::inRange(pin, Gpio::Port::C0, Gpio::Port::C5);
+    return utils::inRange(pin, Atmega328p::Port::C0, Atmega328p::Port::C5);
 }
 
 // -----------------------------------------------------------------------------
 constexpr bool isPinConnectedToPortD(const uint8_t pin) noexcept
 {
-    return utils::inRange(pin, Gpio::Port::D0, Gpio::Port::D5);
+    return utils::inRange(pin, Atmega328p::Port::D0, Atmega328p::Port::D5);
 }
 
 // -----------------------------------------------------------------------------
@@ -95,9 +95,9 @@ constexpr uint8_t getPhysicalPin(const uint8_t pin) noexcept
 }
 
 // -----------------------------------------------------------------------------
-constexpr bool isDirectionValid(const Gpio::Direction direction) noexcept
+constexpr bool isDirectionValid(const Atmega328p::Direction direction) noexcept
 {
-    return Gpio::Direction::Count > direction;
+    return Atmega328p::Direction::Count > direction;
 }
 
 // -----------------------------------------------------------------------------
@@ -110,7 +110,7 @@ inline void invokeCallback(const uint8_t port) noexcept
 /**
  * @brief GPIO hardware structure.
  */
-struct Gpio::Hardware 
+struct Atmega328p::Hardware 
 {
     /** Reference to data direction register (DDRx). */
     volatile uint8_t& dirReg;
@@ -132,40 +132,40 @@ struct Gpio::Hardware
 };
 
 /** Hardware structure for I/O port B. */
-struct Gpio::Hardware Gpio::myHwPortB
+struct Atmega328p::Hardware Atmega328p::myHwPortB
 {
     .dirReg   = DDRB,
     .portReg  = PORTB,
     .pinReg   = PINB,
     .pcMskReg = PCMSK0,
     .pciBit   = PCIE0,
-    .port     = Gpio::IoPort::B,
+    .port     = Atmega328p::IoPort::B,
 };
 
 /** Hardware structure for I/O port C. */
-struct Gpio::Hardware Gpio::myHwPortC
+struct Atmega328p::Hardware Atmega328p::myHwPortC
 {
     .dirReg   = DDRC,
     .portReg  = PORTC,
     .pinReg   = PINC,
     .pcMskReg = PCMSK1,
     .pciBit   = PCIE1,
-    .port     = Gpio::IoPort::C,
+    .port     = Atmega328p::IoPort::C,
 };
 
 /** Hardware structure for I/O port D. */
-struct Gpio::Hardware Gpio::myHwPortD
+struct Atmega328p::Hardware Atmega328p::myHwPortD
 {
     .dirReg   = DDRD,
     .portReg  = PORTD,
     .pinReg   = PIND,
     .pcMskReg = PCMSK2,
     .pciBit   = PCIE2,
-    .port     = Gpio::IoPort::D,
+    .port     = Atmega328p::IoPort::D,
 };
 
 // -----------------------------------------------------------------------------
-Gpio::Gpio(const uint8_t pin, const Direction direction, void (*callback)()) noexcept
+Atmega328p::Atmega328p(const uint8_t pin, const Direction direction, void (*callback)()) noexcept
     : myHardware{reserve(pin, direction)}
     , myPin{getPhysicalPin(pin)}
 { 
@@ -178,7 +178,7 @@ Gpio::Gpio(const uint8_t pin, const Direction direction, void (*callback)()) noe
 }
 
 // -----------------------------------------------------------------------------
-Gpio::~Gpio() noexcept 
+Atmega328p::~Atmega328p() noexcept 
 { 
     // Free resources used for the GPIO before deletion.
     utils::clear(myHardware->dirReg, myPin);
@@ -190,22 +190,22 @@ Gpio::~Gpio() noexcept
 }
 
 // -----------------------------------------------------------------------------
-uint8_t Gpio::operator()() const noexcept { return myPin; }
+uint8_t Atmega328p::operator()() const noexcept { return myPin; }
 
 // -----------------------------------------------------------------------------
-uint8_t Gpio::pin() const noexcept { return myPin; }
+uint8_t Atmega328p::pin() const noexcept { return myPin; }
 
 // -----------------------------------------------------------------------------
-Gpio::IoPort Gpio::port() const noexcept { return myHardware->port; };
+Atmega328p::IoPort Atmega328p::port() const noexcept { return myHardware->port; };
 
 // -----------------------------------------------------------------------------
-bool Gpio::isInitialized() const noexcept { return nullptr != myHardware; }
+bool Atmega328p::isInitialized() const noexcept { return nullptr != myHardware; }
 
 // -----------------------------------------------------------------------------
-bool Gpio::read() const noexcept { return utils::read(myHardware->pinReg, myPin); }
+bool Atmega328p::read() const noexcept { return utils::read(myHardware->pinReg, myPin); }
 
 // -----------------------------------------------------------------------------
-void Gpio::write(const bool output) noexcept
+void Atmega328p::write(const bool output) noexcept
 {
     // Set/clear the output as requested.
     if (output) { utils::set(myHardware->portReg, myPin); }
@@ -213,10 +213,10 @@ void Gpio::write(const bool output) noexcept
 }
 
 // -----------------------------------------------------------------------------
-void Gpio::toggle() noexcept { utils::set(myHardware->pinReg, myPin); }
+void Atmega328p::toggle() noexcept { utils::set(myHardware->pinReg, myPin); }
 
 // -----------------------------------------------------------------------------
-void Gpio::enableInterruptOnPort(const bool enable) noexcept 
+void Atmega328p::enableInterruptOnPort(const bool enable) noexcept 
 { 
     // Enable/disable interrupts on the associated port as requested.
     if (enable) { utils::set(PCICR, myHardware->pciBit); }
@@ -224,7 +224,7 @@ void Gpio::enableInterruptOnPort(const bool enable) noexcept
 }
 
 // -----------------------------------------------------------------------------
-void Gpio::enableInterrupt(const bool enable) noexcept
+void Atmega328p::enableInterrupt(const bool enable) noexcept
 {
     // Enable/disable interrupts on the associated pin as requested.
     if (enable)
@@ -237,14 +237,14 @@ void Gpio::enableInterrupt(const bool enable) noexcept
 }
 
 // -----------------------------------------------------------------------------
-void Gpio::blink(const uint16_t& blinkSpeed_ms) noexcept
+void Atmega328p::blink(const uint16_t& blinkSpeed_ms) noexcept
 {
     toggle();
     utils::delay_ms(blinkSpeed_ms);
 }
 
 // -----------------------------------------------------------------------------
-Gpio::Hardware* Gpio::reserve(const uint8_t pin, const Direction direction) noexcept
+Atmega328p::Hardware* Atmega328p::reserve(const uint8_t pin, const Direction direction) noexcept
 {
     // Return a nullptr if the given pin is reserved or any of the given parameters are invalid.
     if (!isPinNumberValid(pin) || !isDirectionValid(direction) || isPinReserved(pin)) 
@@ -261,7 +261,7 @@ Gpio::Hardware* Gpio::reserve(const uint8_t pin, const Direction direction) noex
 }
 
 // -----------------------------------------------------------------------------
-Gpio::Hardware* Gpio::initHardware(const uint8_t pin) noexcept
+Atmega328p::Hardware* Atmega328p::initHardware(const uint8_t pin) noexcept
 {
     // Return a pointer to the corresponding structure, or a nullptr if the pin number is invalid.
     if (isPinConnectedToPortB(pin))      { return &myHwPortB; }
@@ -271,7 +271,7 @@ Gpio::Hardware* Gpio::initHardware(const uint8_t pin) noexcept
 }
 
 // -----------------------------------------------------------------------------
-void Gpio::setDirection(const Direction direction) noexcept
+void Atmega328p::setDirection(const Direction direction) noexcept
 {
     // Set the GPIO direction by writing to the hardware registers.
     if (direction == Direction::InputPullup) { utils::set(myHardware->portReg, myPin); } 
@@ -279,7 +279,7 @@ void Gpio::setDirection(const Direction direction) noexcept
 }
 
 // -----------------------------------------------------------------------------
-void Gpio::setCallback(void (*callback)()) const noexcept
+void Atmega328p::setCallback(void (*callback)()) const noexcept
 {
     // Register the given callback for the associated I/O port.
     if (myHardware->portReg == PORTB)      
@@ -305,5 +305,5 @@ ISR (PCINT1_vect) { invokeCallback(CallbackIndex::PortC); }
 // -----------------------------------------------------------------------------
 ISR (PCINT2_vect) { invokeCallback(CallbackIndex::PortD); }
 
-} // namespace atmega328p
+} // namespace gpio
 } // namespace driver

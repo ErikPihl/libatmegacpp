@@ -7,16 +7,18 @@
 
 namespace driver
 {
+namespace watchdog
+{
 /**
  * @brief Watchdog timer interface.
  */
-class WatchdogInterface
+class Interface
 {
 public:
     /**
      * @brief Delete the watchdog timer.
      */
-    virtual ~WatchdogInterface() noexcept = default;
+    virtual ~Interface() noexcept = default;
 
     /**
      * @brief Check whether the watchdog timer is initialized.
@@ -51,4 +53,5 @@ public:
      */
     virtual void reset() = 0;
 };
+} // namespace watchdog
 } // namespace driver

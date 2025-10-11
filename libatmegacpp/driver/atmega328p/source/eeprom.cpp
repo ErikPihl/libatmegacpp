@@ -3,12 +3,12 @@
  */
 #include <avr/interrupt.h>
 
-#include "driver/atmega328p/eeprom.h"
+#include "driver/eeprom/atmega328p.h"
 #include "utils/utils.h"
 
 namespace driver 
 {
-namespace atmega328p
+namespace eeprom
 {
 namespace
 {
@@ -28,37 +28,37 @@ struct EepromParam
 } // namespace
 
 // -----------------------------------------------------------------------------
-EepromInterface& Eeprom::getInstance() noexcept
+Interface& Atmega328p::getInstance() noexcept
 {
     // Create and initialize the singleton EEPROM instance (once only).
-    static Eeprom myInstance{};
+    static Atmega328p myInstance{};
 
     // Return a reference to the singleton EEPROM instance, cast to the corresponding interface.
     return myInstance; 
 }
 
 // -----------------------------------------------------------------------------
-bool Eeprom::isInitialized() const noexcept { return true; }
+bool Atmega328p::isInitialized() const noexcept { return true; }
 
 // -----------------------------------------------------------------------------
-bool Eeprom::isEnabled() const noexcept { return myEnabled; }
+bool Atmega328p::isEnabled() const noexcept { return myEnabled; }
 
 // -----------------------------------------------------------------------------
-void Eeprom::setEnabled(const bool enable) noexcept { myEnabled = enable; }
+void Atmega328p::setEnabled(const bool enable) noexcept { myEnabled = enable; }
 
 // -----------------------------------------------------------------------------
-Eeprom::Eeprom() noexcept
+Atmega328p::Atmega328p() noexcept
     : myEnabled{false} 
 {}
 
 // -----------------------------------------------------------------------------
-bool Eeprom::isAddressValid(const uint16_t address, const uint8_t dataSize) const noexcept
+bool Atmega328p::isAddressValid(const uint16_t address, const uint8_t dataSize) const noexcept
 {
     return EepromParam::MaxAddress >= address + dataSize;
 }
 
 // -----------------------------------------------------------------------------
-void Eeprom::writeByte(const uint16_t address, const uint8_t data) const noexcept
+void Atmega328p::writeByte(const uint16_t address, const uint8_t data) const noexcept
 {
     // Wait until EEPROM is ready to send the next byte.
     while (utils::read(EECR, EEPE));
@@ -77,7 +77,7 @@ void Eeprom::writeByte(const uint16_t address, const uint8_t data) const noexcep
 }
 
 // -----------------------------------------------------------------------------
-uint8_t Eeprom::readByte(const uint16_t address) const noexcept
+uint8_t Atmega328p::readByte(const uint16_t address) const noexcept
 {
     // Wait until EEPROM is ready to read the next byte.
     while (utils::read(EECR, EEPE));
@@ -89,5 +89,5 @@ uint8_t Eeprom::readByte(const uint16_t address) const noexcept
     utils::set(EECR, EERE);
     return EEDR;
 }
-} // namespace atmega328p
+} // namespace eeprom
 } // namespace driver

@@ -8,16 +8,18 @@
 
 namespace driver
 {
+namespace adc
+{
 /**
  * @brief ADC (A/D converter) interface.
  */
-class AdcInterface
+class Interface
 {
 public:
     /**
      * @brief Delete the ADC.
      */
-    virtual ~AdcInterface() noexcept = default;
+    virtual ~Interface() noexcept = default;
 
     /**
      * @brief Get the resolution of the ADC.
@@ -88,4 +90,5 @@ public:
      */
     virtual void setEnabled(const bool enable) = 0;
 };
+} // namespace adc
 } // namespace driver

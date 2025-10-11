@@ -8,16 +8,18 @@
 
 namespace driver 
 {
+namespace serial
+{
 /**
  * @brief Serial transmission interface.
  */
-class SerialInterface
+class Interface
 {
 public:
     /**
      * @brief Delete the serial device.
      */
-    virtual ~SerialInterface() noexcept = default;
+    virtual ~Interface() noexcept = default;
 
     /** 
      * @brief Get the baud rate of the serial device. 
@@ -74,7 +76,7 @@ private:
 
 // -----------------------------------------------------------------------------
 template <typename... Args>
-bool SerialInterface::printf(const char* format, const Args&... args) const noexcept
+bool Interface::printf(const char* format, const Args&... args) const noexcept
 {
     if (nullptr == format) { return false; }
 
@@ -90,4 +92,5 @@ bool SerialInterface::printf(const char* format, const Args&... args) const noex
     else { print(format); }
     return true;
 }
+} // namespace serial
 } // namespace driver

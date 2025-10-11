@@ -7,16 +7,18 @@
 
 namespace driver
 {
+namespace timer
+{
 /**
  * @brief Timer interface.
  */
-class TimerInterface
+class Interface
 {
 public:
     /**
      * @brief Delete the timer.
      */
-    virtual ~TimerInterface() noexcept = default;
+    virtual ~Interface() noexcept = default;
 
     /**
      * @brief Check if the timer is initialized.
@@ -78,4 +80,5 @@ public:
      */
     virtual void restart() = 0;
 };
+} // namespace timer
 } // namespace driver

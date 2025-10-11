@@ -5,23 +5,41 @@
 
 namespace driver
 {
+namespace adc
+{
 /** ADC (A/D converter) interface. */
-class AdcInterface;
+class Interface;
+} // namespace adc
 
+namespace eeprom
+{
 /** EEPROM (Electrically Erasable Programmable ROM) stream interface. */
-class EepromInterface;
+class Interface;
+} // namespace eeprom
 
+namespace gpio
+{
 /** GPIO interface. */
-class GpioInterface;
+class Interface;
+} // namespace gpio
 
+namespace serial
+{
 /** Serial transmission interface. */
-class SerialInterface;
+class Interface;
+} // namespace serial
 
+namespace timer
+{
 /** Timer interface. */
-class TimerInterface;
+class Interface;
+} // namespace timer
 
+namespace watchdog
+{
 /** Watchdog timer interface. */
-class WatchdogInterface;
+class Interface;
+} // namespace watchdog
 } // namespace driver
 
 namespace logic
@@ -58,10 +76,10 @@ public:
      * @param[in] eeprom EEPROM stream to write the status of the LED to EEPROM.
      * @param[in] adc ADC (currently unused).
      */
-    explicit Logic(driver::GpioInterface& led, driver::GpioInterface& button, 
-                   driver::TimerInterface& debounceTimer, driver::TimerInterface& toggleTimer,
-                   driver::SerialInterface& serial, driver::WatchdogInterface& watchdog, 
-                   driver::EepromInterface& eeprom, driver::AdcInterface& adc) noexcept;
+    explicit Logic(driver::gpio::Interface& led, driver::gpio::Interface& button, 
+                   driver::timer::Interface& debounceTimer, driver::timer::Interface& toggleTimer,
+                   driver::serial::Interface& serial, driver::watchdog::Interface& watchdog, 
+                   driver::eeprom::Interface& eeprom, driver::adc::Interface& adc) noexcept;
 
     /**
      * @brief Delete the logic implementation.
@@ -118,27 +136,27 @@ private:
     bool readLedStateFromEeprom() const noexcept;
 
     /** Reference to the LED to toggle. */
-    driver::GpioInterface& myLed;
+    driver::gpio::Interface& myLed;
 
     /** Button used to toggle the toggle timer. */
-    driver::GpioInterface& myButton;
+    driver::gpio::Interface& myButton;
 
     /** Debounce timer used to mitigate effects of contact bounces. */
-    driver::TimerInterface& myDebounceTimer;
+    driver::timer::Interface& myDebounceTimer;
 
     /** Timer used to toggle the LED. */
-    driver::TimerInterface& myToggleTimer;
+    driver::timer::Interface& myToggleTimer;
 
     /** Serial device used to print status messages. */
-    driver::SerialInterface& mySerial;
+    driver::serial::Interface& mySerial;
 
     /** Watchdog timer that resets the program if it becomes unresponsive. */
-    driver::WatchdogInterface& myWatchdog;
+    driver::watchdog::Interface& myWatchdog;
 
     /** EEPROM stream to write the status of the LED to EEPROM. */
-    driver::EepromInterface& myEeprom;
+    driver::eeprom::Interface& myEeprom;
 
     /** A/D converter (currently unused). */
-    driver::AdcInterface& myAdc;
+    driver::adc::Interface& myAdc;
 };
-} // namespace target
+} // namespace logic

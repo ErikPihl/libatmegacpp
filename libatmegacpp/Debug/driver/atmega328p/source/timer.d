@@ -21,8 +21,8 @@ driver/atmega328p/source/timer.d driver/atmega328p/source/timer.o: \
  ../utils/include/utils/impl/utils_impl.h \
  ../container/include/container/impl/array_impl.h \
  ../container/include/container/iterator/array_iterator.h \
- ../driver/atmega328p/include/driver/atmega328p/timer.h \
- ../driver/include/driver/timer/interface.h \
+ ../driver/atmega328p/include/driver/timer/atmega328p.h \
+ ../driver/interface/include/driver/timer/interface.h \
  ../utils/include/utils/callback_array.h \
  ../utils/include/utils/impl/callback_array_impl.h
 
@@ -70,9 +70,9 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\
 
 ../container/include/container/iterator/array_iterator.h:
 
-../driver/atmega328p/include/driver/atmega328p/timer.h:
+../driver/atmega328p/include/driver/timer/atmega328p.h:
 
-../driver/include/driver/timer/interface.h:
+../driver/interface/include/driver/timer/interface.h:
 
 ../utils/include/utils/callback_array.h:
 

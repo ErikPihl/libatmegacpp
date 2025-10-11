@@ -9,7 +9,7 @@
 
 namespace driver
 {
-namespace atmega328p
+namespace serial
 {
 /**
  * @brief Serial driver for ATmega328P.
@@ -17,7 +17,7 @@ namespace atmega328p
  *        Use the singleton design pattern to ensure only one serial device instance exists,
  *        reflecting the hardware limitation of a single serial port on the MCU.
  */
-class Serial final : public SerialInterface
+class Atmega328p final : public Interface
 {
 public:
     /**
@@ -25,7 +25,7 @@ public:
      * 
      * @return Reference to the singleton serial instance.
      */
-    static SerialInterface& getInstance() noexcept;
+    static Interface& getInstance() noexcept;
 
     /** 
      * @brief Get the baud rate of the serial device. 
@@ -55,21 +55,21 @@ public:
      */
     void setEnabled(const bool enable) noexcept override;
 
-    Serial(const Serial&)                      = delete; // No copy constructor.
-    Serial(Serial&& other) noexcept            = delete; // No move constructor.
-    Serial& operator=(const Serial&)           = delete; // No copy assignment.
-    Serial& operator=(Serial&& other) noexcept = delete; // No move assignment.
+    Atmega328p(const Atmega328p&)                      = delete; // No copy constructor.
+    Atmega328p(Atmega328p&& other) noexcept            = delete; // No move constructor.
+    Atmega328p& operator=(const Atmega328p&)           = delete; // No copy assignment.
+    Atmega328p& operator=(Atmega328p&& other) noexcept = delete; // No move assignment.
 
 private:
     /**
      * @brief Create new serial device.
      */
-    Serial() noexcept;
+    Atmega328p() noexcept;
 
     /**
      * @brief Delete the serial device.
      */
-    ~Serial() noexcept override = default;
+    ~Atmega328p() noexcept override = default;
 
     /**
      * @brief Print the given string in the serial terminal.
@@ -81,5 +81,5 @@ private:
     /** Indicate whether serial transmission is enabled. */
     bool myEnabled;
 };
-} // namespace atmega328p
+} // namespace serial
 } // namespace driver

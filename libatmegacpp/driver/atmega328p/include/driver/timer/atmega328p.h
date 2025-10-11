@@ -9,7 +9,7 @@
 
 namespace driver 
 {
-namespace atmega328p
+namespace timer
 {
 /**
  * @brief Timer driver for ATmega328P.
@@ -18,7 +18,7 @@ namespace atmega328p
  *
  * @note Tree hardware timers Timer 0 - Timer 2 are available.
  */
-class Timer final : public TimerInterface
+class Atmega328p final : public Interface
 {
 public:
     /**
@@ -28,13 +28,13 @@ public:
      * @param[in] callback Callback to invoke on timeout (default = none).
      * @param[in] startTimer Start the timer immediately (default = false).
      */
-    explicit Timer(const uint32_t elapseTimeMs, void (*callback)() = nullptr,
-                   const bool startTimer = false) noexcept;
+    explicit Atmega328p(const uint32_t elapseTimeMs, void (*callback)() = nullptr,
+                        const bool startTimer = false) noexcept;
 
     /**
      * @brief Delete the timer.
      */
-    ~Timer() noexcept override;
+    ~Atmega328p() noexcept override;
 
     /**
      * @brief Check if the timer is initialized.
@@ -115,11 +115,11 @@ public:
      */
     bool increment() noexcept;
 
-    Timer()                        = delete; // No default constructor.
-    Timer(const Timer&)            = delete; // No copy constructor.
-    Timer(Timer&&)                 = delete; // No move constructor.
-    Timer& operator=(const Timer&) = delete; // No copy assignment.
-    Timer& operator=(Timer&&)      = delete; // No move assignment.
+    Atmega328p()                             = delete; // No default constructor.
+    Atmega328p(const Atmega328p&)            = delete; // No copy constructor.
+    Atmega328p(Atmega328p&&)                 = delete; // No move constructor.
+    Atmega328p& operator=(const Atmega328p&) = delete; // No copy assignment.
+    Atmega328p& operator=(Atmega328p&&)      = delete; // No move assignment.
 
 private:
     /** Timer hardware structure. */
@@ -134,5 +134,5 @@ private:
     /** Indicate whether the timer is enabled. */
     bool myEnabled;
 };
-} // namespace atmega328p
+} // namespace timer
 } // namespace driver

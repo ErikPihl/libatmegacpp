@@ -12,8 +12,8 @@ driver/atmega328p/source/eeprom.d driver/atmega328p/source/eeprom.o: \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\version.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\fuse.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h \
- ../driver/atmega328p/include/driver/atmega328p/eeprom.h \
- ../driver/include/driver/eeprom/interface.h \
+ ../driver/atmega328p/include/driver/eeprom/atmega328p.h \
+ ../driver/interface/include/driver/eeprom/interface.h \
  ../utils/include/utils/type_traits.h ../utils/include/utils/utils.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdlib.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stddef.h \
@@ -45,9 +45,9 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h:
 
-../driver/atmega328p/include/driver/atmega328p/eeprom.h:
+../driver/atmega328p/include/driver/eeprom/atmega328p.h:
 
-../driver/include/driver/eeprom/interface.h:
+../driver/interface/include/driver/eeprom/interface.h:
 
 ../utils/include/utils/type_traits.h:
 

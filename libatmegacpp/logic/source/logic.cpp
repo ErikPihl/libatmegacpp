@@ -26,10 +26,10 @@ namespace LedState
 };
 
 // -----------------------------------------------------------------------------
-Logic::Logic(driver::GpioInterface& led, driver::GpioInterface& button,
-               driver::TimerInterface& debounceTimer, driver::TimerInterface& toggleTimer,
-               driver::SerialInterface& serial, driver::WatchdogInterface& watchdog,
-               driver::EepromInterface& eeprom, driver::AdcInterface& adc) noexcept
+Logic::Logic(driver::gpio::Interface& led, driver::gpio::Interface& button,
+             driver::timer::Interface& debounceTimer, driver::timer::Interface& toggleTimer,
+               driver::serial::Interface& serial, driver::watchdog::Interface& watchdog,
+               driver::eeprom::Interface& eeprom, driver::adc::Interface& adc) noexcept
     : myLed{led}
     , myButton{button}
     , myDebounceTimer{debounceTimer}

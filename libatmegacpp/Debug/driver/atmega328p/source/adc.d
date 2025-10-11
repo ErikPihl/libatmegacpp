@@ -11,8 +11,8 @@ driver/atmega328p/source/adc.d driver/atmega328p/source/adc.o: \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\version.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\fuse.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h \
- ../driver/atmega328p/include/driver/atmega328p/adc.h \
- ../driver/include/driver/adc/interface.h \
+ ../driver/atmega328p/include/driver/adc/atmega328p.h \
+ ../driver/interface/include/driver/adc/interface.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stddef.h \
  ../utils/include/utils/utils.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdlib.h \
@@ -43,9 +43,9 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h:
 
-../driver/atmega328p/include/driver/atmega328p/adc.h:
+../driver/atmega328p/include/driver/adc/atmega328p.h:
 
-../driver/include/driver/adc/interface.h:
+../driver/interface/include/driver/adc/interface.h:
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stddef.h:
 

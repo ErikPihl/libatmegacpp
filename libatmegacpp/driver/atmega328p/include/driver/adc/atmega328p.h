@@ -9,7 +9,7 @@
 
 namespace driver 
 {
-namespace atmega328p
+namespace adc
 {
 /**
  * @brief ADC driver for the ATmega328P ADC (A/D converter).
@@ -17,7 +17,7 @@ namespace atmega328p
  *        Use the singleton design pattern to ensure only one ADC instance exists,
  *        reflecting the hardware limitation of a single ADC on the MCU.
  */
-class Adc final : public AdcInterface
+class Atmega328p final : public Interface
 {
 public:
     struct Pin;  // Pin aliases for analog pins.
@@ -28,7 +28,7 @@ public:
      * 
      * @return Reference to the singleton ADC instance.
      */
-    static AdcInterface& getInstance() noexcept;
+    static Interface& getInstance() noexcept;
 
     /**
      * @brief Get the resolution of the ADC.
@@ -99,14 +99,14 @@ public:
      */
     void setEnabled(const bool enable) noexcept override;
 
-    Adc(const Adc&)            = delete; // No copy constructor.
-    Adc(Adc&&)                 = delete; // No move constructor.
-    Adc& operator=(const Adc&) = delete; // No copy assignment.
-    Adc& operator=(Adc&&)      = delete; // No move assignment.
+    Atmega328p(const Atmega328p&)            = delete; // No copy constructor.
+    Atmega328p(Atmega328p&&)                 = delete; // No move constructor.
+    Atmega328p& operator=(const Atmega328p&) = delete; // No copy assignment.
+    Atmega328p& operator=(Atmega328p&&)      = delete; // No move assignment.
 
 private:
-    Adc() noexcept;
-    ~Adc() noexcept override = default;
+    Atmega328p() noexcept;
+    ~Atmega328p() noexcept override = default;
 
     /** Indicate whether the ADC is enabled. */
     bool myEnabled;
@@ -115,7 +115,7 @@ private:
 /**
  * @brief Structure of pin names for analog pins.
  */
-struct Adc::Pin 
+struct Atmega328p::Pin 
 {
     static constexpr uint8_t A0{0U}; // Pin A0 = 0.
     static constexpr uint8_t A1{1U}; // Pin A1 = 1.
@@ -128,7 +128,7 @@ struct Adc::Pin
 /**
  * @brief Structure of port names for analog pins.
  */
-struct Adc::Port
+struct Atmega328p::Port
 {
     static constexpr uint8_t C0{14U}; // PORTC0 = pin 14.
     static constexpr uint8_t C1{15U}; // PORTC1 = pin 15.
@@ -137,5 +137,5 @@ struct Adc::Port
     static constexpr uint8_t C4{18U}; // PORTC4 = pin 18.
     static constexpr uint8_t C5{19U}; // PORTC5 = pin 10.
 };
-} // namespace atmega328p
+} // namespace adc
 } // namespace driver

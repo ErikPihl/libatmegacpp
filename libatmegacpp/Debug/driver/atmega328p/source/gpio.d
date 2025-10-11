@@ -12,8 +12,8 @@ driver/atmega328p/source/gpio.d driver/atmega328p/source/gpio.o: \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\version.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\fuse.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h \
- ../driver/atmega328p/include/driver/atmega328p/gpio.h \
- ../driver/include/driver/gpio/interface.h \
+ ../driver/atmega328p/include/driver/gpio/atmega328p.h \
+ ../driver/interface/include/driver/gpio/interface.h \
  ../utils/include/utils/callback_array.h \
  ../container/include/container/array.h ../utils/include/utils/utils.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdlib.h \
@@ -50,9 +50,9 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h:
 
-../driver/atmega328p/include/driver/atmega328p/gpio.h:
+../driver/atmega328p/include/driver/gpio/atmega328p.h:
 
-../driver/include/driver/gpio/interface.h:
+../driver/interface/include/driver/gpio/interface.h:
 
 ../utils/include/utils/callback_array.h:
 

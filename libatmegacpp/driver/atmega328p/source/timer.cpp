@@ -4,18 +4,18 @@
 #include <avr/interrupt.h>
 
 #include "container/array.h"
-#include "driver/atmega328p/timer.h" 
+#include "driver/timer/atmega328p.h" 
 #include "utils/callback_array.h"
 #include "utils/utils.h"
 
 namespace driver 
 {
-namespace atmega328p
+namespace timer
 {
 /**
  * @brief Structure for implementation of timer hardware.
  */
-struct Timer::Hardware 
+struct Atmega328p::Hardware 
 {
     /** Hardware counter. */
 	volatile uint32_t counter;
@@ -85,14 +85,14 @@ struct TimerParam
 	static constexpr double interruptIntervalMs{0.128};
 
 	/** Array holding pointers to TimerParam::timers. */
-	static Timer* timers[circuitCount];
+	static Atmega328p* timers[circuitCount];
 
 	/** Array holding pointers to callbacks. */
 	static CallbackArray<circuitCount> callbacks;
 };
 
 /** Array holding pointers to TimerParam::timers. */
-Timer* TimerParam::TimerParam::timers[TimerParam::circuitCount]{};  
+Atmega328p* TimerParam::TimerParam::timers[TimerParam::circuitCount]{};  
 
 /** Array holding pointers to callbacks. */
 CallbackArray<TimerParam::circuitCount> TimerParam::callbacks{};
@@ -123,7 +123,7 @@ void invokeCallback(const uint8_t timerIndex) noexcept
 } // namespace
 
 // -----------------------------------------------------------------------------
-Timer::Timer(const uint32_t elapseTimeMs, void (*callback)(), const bool startTimer) noexcept
+Atmega328p::Atmega328p(const uint32_t elapseTimeMs, void (*callback)(), const bool startTimer) noexcept
     : myHardware{Hardware::reserve()}
 	, myMaxCount{maxCount(elapseTimeMs)}
 	, myEnabled{false}
@@ -135,7 +135,7 @@ Timer::Timer(const uint32_t elapseTimeMs, void (*callback)(), const bool startTi
 }
 
 // -----------------------------------------------------------------------------
-Timer::~Timer() noexcept 
+Atmega328p::~Atmega328p() noexcept 
 { 
 	removeCallback();
 	TimerParam::timers[myHardware->index] = nullptr;
@@ -143,13 +143,13 @@ Timer::~Timer() noexcept
 }
 
 // -----------------------------------------------------------------------------
-bool Timer::isInitialized() const noexcept { return nullptr != myHardware; }
+bool Atmega328p::isInitialized() const noexcept { return nullptr != myHardware; }
 
 // -----------------------------------------------------------------------------
-bool Timer::isEnabled() const noexcept { return myEnabled; }
+bool Atmega328p::isEnabled() const noexcept { return myEnabled; }
 
 // -----------------------------------------------------------------------------
-bool Timer::hasTimedOut() noexcept
+bool Atmega328p::hasTimedOut() noexcept
 {
     if (!myEnabled || (myHardware->counter < myMaxCount)) { return false; } 
 	else 
@@ -160,20 +160,20 @@ bool Timer::hasTimedOut() noexcept
 }
 
 // -----------------------------------------------------------------------------
-uint32_t Timer::timeout_ms() const noexcept
+uint32_t Atmega328p::timeout_ms() const noexcept
 {
 	return utils::round<uint32_t>(myMaxCount * TimerParam::interruptIntervalMs);
 }
 
 // -----------------------------------------------------------------------------
-void Timer::setTimeout_ms(const uint32_t timeout_ms) noexcept
+void Atmega328p::setTimeout_ms(const uint32_t timeout_ms) noexcept
 {
     if (0U == timeout_ms) { stop(); }
     myMaxCount = maxCount(timeout_ms);
 }
 
 // -----------------------------------------------------------------------------
-void Timer::start() noexcept
+void Atmega328p::start() noexcept
 { 
 	if (0U == myMaxCount) { return; }
     utils::globalInterruptEnable();
@@ -182,40 +182,40 @@ void Timer::start() noexcept
 }
 
 // -----------------------------------------------------------------------------
-void Timer::stop() noexcept
+void Atmega328p::stop() noexcept
 { 
     *(myHardware->maskReg) = 0U;
 	myEnabled              = false; 
 }
 
 // -----------------------------------------------------------------------------
-void Timer::toggle() noexcept 
+void Atmega328p::toggle() noexcept 
 { 
 	if (myEnabled) { stop(); }
 	else { start(); }
 }
 
 // -----------------------------------------------------------------------------
-void Timer::restart() noexcept
+void Atmega328p::restart() noexcept
 {
     myHardware->counter = 0U;
     start();
 }
 
 // -----------------------------------------------------------------------------
-void Timer::addCallback(void (*callback)()) const noexcept
+void Atmega328p::addCallback(void (*callback)()) const noexcept
 { 
     TimerParam::callbacks.add(callback, myHardware->index);
 }
 
 // -----------------------------------------------------------------------------
-void Timer::removeCallback() const noexcept
+void Atmega328p::removeCallback() const noexcept
 {
 	TimerParam::callbacks.remove(myHardware->index);
 }
 
 // -----------------------------------------------------------------------------
-bool Timer::increment() noexcept
+bool Atmega328p::increment() noexcept
 {
 	if (!myEnabled) { return false; }
 	myHardware->counter++; 
@@ -223,7 +223,7 @@ bool Timer::increment() noexcept
 }
 
 // -----------------------------------------------------------------------------
-Timer::Hardware* Timer::Hardware::reserve() noexcept
+Atmega328p::Hardware* Atmega328p::Hardware::reserve() noexcept
 {
 	// Reserve a timer circuit if any is available, otherwise return a nullptr.
     for (uint8_t i{}; i < TimerParam::circuitCount; ++i)
@@ -234,7 +234,7 @@ Timer::Hardware* Timer::Hardware::reserve() noexcept
 }
 
 // -----------------------------------------------------------------------------
-void Timer::Hardware::release(Timer::Hardware* hardware) noexcept
+void Atmega328p::Hardware::release(Atmega328p::Hardware* hardware) noexcept
 {
 	// Reset the associated hardware timer.
 	if (hardware == nullptr) { return; }
@@ -260,7 +260,7 @@ void Timer::Hardware::release(Timer::Hardware* hardware) noexcept
 }
 
 // -----------------------------------------------------------------------------
-Timer::Hardware* Timer::Hardware::init(const uint8_t timerIndex) noexcept
+Atmega328p::Hardware* Atmega328p::Hardware::init(const uint8_t timerIndex) noexcept
 {
 	// Allocate memory for the new timer hardware, return false is memory allocation failed.
     auto hardware{utils::newMemory<Hardware>()};
@@ -304,5 +304,5 @@ ISR (TIMER1_COMPA_vect) { invokeCallback(TimerIndex::timer1); }
 // -----------------------------------------------------------------------------
 ISR (TIMER2_OVF_vect) { invokeCallback(TimerIndex::timer2); }
 
-} // namespace atmega328p
+} // namespace timer
 } // namespace driver

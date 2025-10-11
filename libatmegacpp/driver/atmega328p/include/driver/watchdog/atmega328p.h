@@ -9,7 +9,7 @@
 
 namespace driver 
 {
-namespace atmega328p
+namespace watchdog
 {
 /**
  * @brief Watchdog timer driver for ATmega328P.
@@ -19,7 +19,7 @@ namespace atmega328p
  * 
  *        The default timeout is 1024 ms.
  */
-class Watchdog final : public WatchdogInterface
+class Atmega328p final : public Interface
 {
 public:
 
@@ -31,7 +31,7 @@ public:
      * 
      * @return Reference to the singleton watchdog timer instance.
      */
-    static WatchdogInterface& getInstance() noexcept;
+    static Interface& getInstance() noexcept;
 
     /**
      * @brief Check whether the watchdog timer is initialized.
@@ -75,14 +75,14 @@ public:
      */
     bool setTimeout(const Timeout timeout) noexcept;
 
-    Watchdog(const Watchdog&)            = delete; // No copy constructor.
-    Watchdog(Watchdog&&)                 = delete; // No move constructor.
-    Watchdog& operator=(const Watchdog&) = delete; // No copy assignment.
-    Watchdog& operator=(Watchdog&&)      = delete; // No move assignment.
+    Atmega328p(const Atmega328p&)            = delete; // No copy constructor.
+    Atmega328p(Atmega328p&&)                 = delete; // No move constructor.
+    Atmega328p& operator=(const Atmega328p&) = delete; // No copy assignment.
+    Atmega328p& operator=(Atmega328p&&)      = delete; // No move assignment.
 
 private:
-    Watchdog() noexcept;
-    ~Watchdog() noexcept override = default;
+    Atmega328p() noexcept;
+    ~Atmega328p() noexcept override = default;
 
     /** Watchdog timeout. */
     Timeout myTimeout;
@@ -94,7 +94,7 @@ private:
 /**
  * @brief Enumeration of watchdog timer timeouts.
  */
-enum class Watchdog::Timeout : uint16_t
+enum class Atmega328p::Timeout : uint16_t
 {
     Duration16ms   = 16UL,   // 16 ms.
     Duration32ms   = 32UL,   // 32 ms.

@@ -7,16 +7,18 @@
 
 namespace driver
 {
+namespace gpio
+{
 /**
  * @brief GPIO interface.
  */
-class GpioInterface
+class Interface
 {
 public:
     /** 
      * @brief Delete the GPIO.
      */
-    virtual ~GpioInterface() noexcept = default;
+    virtual ~Interface() noexcept = default;
 
     /**
      * @brief Check whether the GPIO is initialized.
@@ -61,4 +63,5 @@ public:
      */
     virtual void enableInterruptOnPort(const bool enable) = 0;
 };
+} // namespace gpio
 } // namespace driver

@@ -4,11 +4,11 @@
 #include <avr/io.h>
 
 #include "utils/utils.h"
-#include "driver/atmega328p/watchdog.h"
+#include "driver/watchdog/atmega328p.h"
 
 namespace driver 
 {
-namespace atmega328p
+namespace watchdog
 {
 namespace 
 {
@@ -18,39 +18,39 @@ namespace
 struct WatchdogParam
 {
     /** Default watchdog timeout (1024 ms). */
-    static constexpr auto DefaultTimeout{Watchdog::Timeout::Duration1024ms};
+    static constexpr auto DefaultTimeout{Atmega328p::Timeout::Duration1024ms};
 };
 
 // -----------------------------------------------------------------------------
-constexpr bool isTimeoutValid(const Watchdog::Timeout timeout) noexcept
+constexpr bool isTimeoutValid(const Atmega328p::Timeout timeout) noexcept
 {
-    return static_cast<uint16_t>(Watchdog::Timeout::Invalid) > static_cast<uint16_t>(timeout);
+    return static_cast<uint16_t>(Atmega328p::Timeout::Invalid) > static_cast<uint16_t>(timeout);
 }
     
 // -----------------------------------------------------------------------------
-uint8_t timeoutValue(const Watchdog::Timeout timeout) noexcept
+uint8_t timeoutValue(const Atmega328p::Timeout timeout) noexcept
 {
     switch (timeout)
     {
-        case Watchdog::Timeout::Duration16ms:
+        case Atmega328p::Timeout::Duration16ms:
             return 0U;
-        case Watchdog::Timeout::Duration32ms:
+        case Atmega328p::Timeout::Duration32ms:
             return (1U << WDP0);
-        case Watchdog::Timeout::Duration64ms:
+        case Atmega328p::Timeout::Duration64ms:
             return (1U << WDP1);
-        case Watchdog::Timeout::Duration128ms:
+        case Atmega328p::Timeout::Duration128ms:
             return (1U << WDP1) | (1U << WDP0);
-        case Watchdog::Timeout::Duration256ms:
+        case Atmega328p::Timeout::Duration256ms:
             return (1U << WDP2);
-        case Watchdog::Timeout::Duration512ms:
+        case Atmega328p::Timeout::Duration512ms:
             return (1U << WDP2) | (1U << WDP0);
-        case Watchdog::Timeout::Duration1024ms:
+        case Atmega328p::Timeout::Duration1024ms:
             return (1U << WDP2) | (1U << WDP1);
-        case Watchdog::Timeout::Duration2048ms:
+        case Atmega328p::Timeout::Duration2048ms:
             return (1U << WDP2) | (1U << WDP1) | (1U << WDP0);
-        case Watchdog::Timeout::Duration4096ms:
+        case Atmega328p::Timeout::Duration4096ms:
             return (1U << WDP3);
-        case Watchdog::Timeout::Duration8192ms:
+        case Atmega328p::Timeout::Duration8192ms:
             return (1U << WDP3) | (1U << WDP0);
         default:
             return 0xFFU;
@@ -59,23 +59,23 @@ uint8_t timeoutValue(const Watchdog::Timeout timeout) noexcept
 } // namespace
 
 // -----------------------------------------------------------------------------
-WatchdogInterface& Watchdog::getInstance() noexcept
+Interface& Atmega328p::getInstance() noexcept
 {
     // Create and initialize the singleton watchdog timer instance (once only).
-    static Watchdog myInstance{};
+    static Atmega328p myInstance{};
 
     // Return a reference to the singleton watchdog instance, cast to the corresponding interface.
     return myInstance; 
 }
 
 // -----------------------------------------------------------------------------
-bool Watchdog::isInitialized() const noexcept { return true; }
+bool Atmega328p::isInitialized() const noexcept { return true; }
 
 // -----------------------------------------------------------------------------
-bool Watchdog::isEnabled() const noexcept { return myEnabled; }
+bool Atmega328p::isEnabled() const noexcept { return myEnabled; }
 
 // -----------------------------------------------------------------------------
-void Watchdog::setEnabled(const bool enable) noexcept
+void Atmega328p::setEnabled(const bool enable) noexcept
 {
     // Reset the watchdog to prevent a timeout during the enablement update.
     reset();
@@ -91,10 +91,10 @@ void Watchdog::setEnabled(const bool enable) noexcept
 }
 
 // -----------------------------------------------------------------------------
-uint16_t Watchdog::timeoutMs() const noexcept { return static_cast<uint16_t>(myTimeout); }
+uint16_t Atmega328p::timeoutMs() const noexcept { return static_cast<uint16_t>(myTimeout); }
 
 // -----------------------------------------------------------------------------
-void Watchdog::reset() noexcept 
+void Atmega328p::reset() noexcept 
 { 
     // Disable interrupts during the reset process.
     utils::globalInterruptDisable();
@@ -108,7 +108,7 @@ void Watchdog::reset() noexcept
 }
 
 // -----------------------------------------------------------------------------
-bool Watchdog::setTimeout(const Timeout timeout) noexcept
+bool Atmega328p::setTimeout(const Timeout timeout) noexcept
 {
     // Return false if the timeout is invalid.
     if (!isTimeoutValid(timeout)) { return false; }
@@ -131,12 +131,12 @@ bool Watchdog::setTimeout(const Timeout timeout) noexcept
 } 
 
 // -----------------------------------------------------------------------------
-Watchdog::Watchdog() noexcept
+Atmega328p::Atmega328p() noexcept
     : myTimeout{}
     , myEnabled{false}
 {
     // Set the default timeout.
     setTimeout(WatchdogParam::DefaultTimeout);
 }
-} // namespace atmega328p
+} // namespace watchdog
 } // namespace driver

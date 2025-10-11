@@ -3,12 +3,12 @@
  */
 #include <avr/io.h>
 
-#include "driver/atmega328p/serial.h"
+#include "driver/serial/atmega328p.h"
 #include "utils/utils.h"
 
 namespace driver 
 {
-namespace atmega328p
+namespace serial
 {
 namespace
 {
@@ -39,30 +39,30 @@ void transmitChar(const char character) noexcept
 } // namespace 
 
 // -----------------------------------------------------------------------------
-SerialInterface& Serial::getInstance() noexcept
+Interface& Atmega328p::getInstance() noexcept
 { 
     // Create and initialize the singleton serial instance (once only).
-    static Serial myInstance{};
+    static Atmega328p myInstance{};
 
     // Return a reference to the singleton serial instance, cast to the corresponding interface.
     return myInstance; 
 }
 
 // -----------------------------------------------------------------------------
-uint32_t Serial::baudRate_bps() const { return Param::BaudRate_bps; }
+uint32_t Atmega328p::baudRate_bps() const { return Param::BaudRate_bps; }
 
 // -----------------------------------------------------------------------------
-bool Serial::isInitialized() const noexcept { return true; }
+bool Atmega328p::isInitialized() const noexcept { return true; }
 
 // -----------------------------------------------------------------------------
-bool Serial::isEnabled() const noexcept { return myEnabled; }
+bool Atmega328p::isEnabled() const noexcept { return myEnabled; }
 
 // -----------------------------------------------------------------------------
-void Serial::setEnabled(const bool enable) noexcept { myEnabled = enable; }
+void Atmega328p::setEnabled(const bool enable) noexcept { myEnabled = enable; }
 
 // -----------------------------------------------------------------------------
-Serial::Serial() noexcept 
-    : myEnabled{false}
+Atmega328p::Atmega328p() noexcept 
+    : myEnabled{true}
 { 
     // Baud rate value corresponding to 9600 kbps.
     constexpr uint16_t baudRateValue{103U};
@@ -81,7 +81,7 @@ Serial::Serial() noexcept
 }
 
 // -----------------------------------------------------------------------------
-void Serial::print(const char* message) const noexcept
+void Atmega328p::print(const char* message) const noexcept
 {
     // Terminate the function if serial transmission isn't enabled.
     if (!myEnabled) { return; }
@@ -98,5 +98,5 @@ void Serial::print(const char* message) const noexcept
         }
     }
 }
-} // namespace atmega328p
+} // namespace serial
 } // namespace driver
