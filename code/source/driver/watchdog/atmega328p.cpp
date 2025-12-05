@@ -90,7 +90,7 @@ void Atmega328p::setEnabled(const bool enable) noexcept
 }
 
 // -----------------------------------------------------------------------------
-uint16_t Atmega328p::timeoutMs() const noexcept { return static_cast<uint16_t>(myTimeout); }
+uint16_t Atmega328p::timeout_ms() const noexcept { return static_cast<uint16_t>(myTimeout); }
 
 // -----------------------------------------------------------------------------
 void Atmega328p::reset() noexcept 

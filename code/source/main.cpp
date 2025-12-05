@@ -122,7 +122,8 @@ int main()
     myLogic = &logic;
 
     // Run the application perpetually on the target MCU.
-    myLogic->run();
+    const bool stop{false};
+    myLogic->run(stop);
 
     // This point should never be reached; the system is intended to run indefinitely on the target MCU.
     return 0;

@@ -59,7 +59,7 @@ public:
      * 
      * @return The timeout of the watchdog timer in milliseconds.
      */
-    uint16_t timeoutMs() const noexcept override;
+    uint16_t timeout_ms() const noexcept override;
 
     /**
      * @brief Reset the watchdog timer.

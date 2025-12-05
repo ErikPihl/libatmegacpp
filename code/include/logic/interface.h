@@ -17,9 +17,11 @@ public:
     virtual ~Interface() noexcept = default;
 
     /**
-     * @brief Run the system as long as voltage is supplied.                                                               
+     * @brief Run the system.   
+     * 
+     * @param[in] stop Reference to stop flag.                                                         
      */
-    virtual void run() noexcept = 0;
+    virtual void run(const bool& stop) noexcept = 0;
 
     /**
      * @brief Handle button event.

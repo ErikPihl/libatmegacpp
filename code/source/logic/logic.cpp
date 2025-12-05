@@ -68,18 +68,19 @@ Logic::~Logic() noexcept
     myDebounceTimer.stop();
     myToggleTimer.stop();
     myTempTimer.stop();
-    mySerial.setEnabled(true);
-    myToggleTimer.stop();
+    mySerial.setEnabled(false);
     myWatchdog.setEnabled(false);
+    myEeprom.setEnabled(false);
+    myToggleTimer.stop();
 }
 
 // -----------------------------------------------------------------------------
-void Logic::run() noexcept
+void Logic::run(const bool& stop) noexcept
 {
     mySerial.printf("Running the system!\n");
 
     // Run the system continuously.
-    while (1) 
+    while (!stop) 
     { 
         // Regularly reset the watchdog to avoid system reset.
         myWatchdog.reset(); 

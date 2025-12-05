@@ -46,7 +46,7 @@ public:
      * 
      * @return The timeout of the watchdog timer in milliseconds.
      */
-    virtual uint16_t timeoutMs() const noexcept = 0;
+    virtual uint16_t timeout_ms() const noexcept = 0;
 
     /**
      * @brief Reset the watchdog timer.

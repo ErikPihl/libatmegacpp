@@ -1,5 +1,5 @@
 /**
- * @brief Serial transmission interface.
+ * @brief Serial driver interface.
  */
 #pragma once
 
@@ -11,7 +11,7 @@ namespace driver
 namespace serial
 {
 /**
- * @brief Serial transmission interface.
+ * @brief Serial driver interface.
  */
 class Interface
 {

@@ -4,7 +4,7 @@
 
 ```bash
 sudo apt -y update
-sudo apt -y install libgtest-dev cmake
+sudo apt -y install libgtest-dev libgmock-dev cmake
 ```
 
 ```bash

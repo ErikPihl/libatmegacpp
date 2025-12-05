@@ -103,9 +103,11 @@ public:
     ~Logic() noexcept override;
 
     /**
-     * @brief Run the system as long as voltage is supplied.                                                               
+     * @brief Run the system.  
+     * 
+     * @param[in] stop Reference to stop flag.                                                            
      */
-    void run() noexcept override;
+    void run(const bool& stop) noexcept override;
 
     /**
      * @brief Handle button event.
