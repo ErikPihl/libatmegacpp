@@ -57,7 +57,7 @@ private:
     Atmega328p() noexcept;
     ~Atmega328p() noexcept override = default;
     bool isAddressValid(const uint16_t address, const uint8_t dataSize) const noexcept override;
-    void writeByte(const uint16_t address, const uint8_t data) const noexcept override;
+    void writeByte(const uint16_t address, const uint8_t data) noexcept override;
     uint8_t readByte(const uint16_t address) const noexcept override;
 
     /** Indicate whether the EEPROM stream is enabled. */

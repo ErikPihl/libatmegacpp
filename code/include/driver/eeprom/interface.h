@@ -55,7 +55,7 @@ public:
      * @return True upon successful write, false otherwise.
      */
     template <typename T = uint8_t>
-    bool write(const uint16_t address, const T& data) const noexcept;
+    bool write(const uint16_t address, const T& data) noexcept;
 
     /**
      * @brief Read data from given address in EEPROM. If more than one byte is to be read,
@@ -73,13 +73,13 @@ public:
 
 private: 
     virtual bool isAddressValid(const uint16_t address, const uint8_t dataSize) const noexcept = 0;
-    virtual void writeByte(const uint16_t address, const uint8_t data) const noexcept = 0;
+    virtual void writeByte(const uint16_t address, const uint8_t data) noexcept = 0;
     virtual uint8_t readByte(const uint16_t address) const noexcept = 0;
 };
 
 // -----------------------------------------------------------------------------
 template <typename T>
-bool Interface::write(const uint16_t address, const T& data) const noexcept
+bool Interface::write(const uint16_t address, const T& data) noexcept
 {
     // Generate a compiler error if the given type isn't of unsigned type.
     static_assert(type_traits::is_unsigned<T>::value, 

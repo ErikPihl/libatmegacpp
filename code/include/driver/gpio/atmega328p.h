@@ -29,7 +29,7 @@ public:
     enum class IoPort : uint8_t;
 
     /**
-     * @brief Create a new GPIO.
+     * @brief Constructor.
      *
      * @param[in] pin The pin number of the GPIO.
      * @param[in] direction The GPIO direction.

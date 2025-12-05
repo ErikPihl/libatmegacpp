@@ -69,11 +69,11 @@ namespace logic
  * 
  *        This class is non-copyable and non-movable.
  */
-class Logic final : public Interface
+class Logic : public Interface
 {
 public:
     /**
-     * @brief Create a new logic implementation for a given system.
+     * @brief Constructor.
      *     
      * @param[in] led The LED to toggle.
      * @param[in] toggleButton Button to toggle the toggle timer.
@@ -148,6 +148,19 @@ public:
     Logic(Logic&&)                 = delete; // No move constructor.
     Logic& operator=(const Logic&) = delete; // No copy assignment.
     Logic& operator=(Logic&&)      = delete; // No move assignment.
+
+protected:
+     /**
+     * @brief Structure of LED state parameters.
+     */
+    struct LedState
+    {
+        /** LED state address in EEPROM. */
+        static constexpr uint8_t Address{0U};
+
+        /** Enabled state value in EEPROM. */
+        static constexpr uint8_t Enabled{1U};
+    };
 
 private:
     void handleToggleButtonPressed() noexcept;

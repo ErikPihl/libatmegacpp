@@ -1,5 +1,5 @@
 /**
- * @brief Test cases for the logic implementation.
+ * @brief Component tests for the logic implementation.
  */
 #include <chrono>
 #include <cstdint>
@@ -7,12 +7,14 @@
 #include <thread>
 
 #include <gtest/gtest.h>
-#include <gmock/gmock.h>
 
-#include "logic/logic.h"
-#include "test/driver/mock.h"
-
-using namespace ::testing;
+#include "driver/eeprom/stub.h"
+#include "driver/gpio/stub.h"
+#include "driver/serial/stub.h"
+#include "driver/tempsensor/stub.h"
+#include "driver/timer/stub.h"
+#include "driver/watchdog/stub.h"
+#include "logic/stub.h"
 
 namespace logic
 {
@@ -23,178 +25,158 @@ namespace
  */
 struct Mock
 {
-    driver::gpio::Mock led;
-    driver::gpio::Mock toggleButton;
-    driver::gpio::Mock tempButton;
-    driver::timer::Mock debounceTimer;
-    driver::timer::Mock toggleTimer;
-    driver::timer::Mock tempTimer;
-    driver::serial::Mock serial;
-    driver::watchdog::Mock watchdog;
-    driver::eeprom::Mock eeprom;
-    driver::tempsensor::Mock tempSensor;
+    /** EEPROM size in bytes. */
+    static constexpr uint16_t EepromSize{1024U};
+
+    /** LED stub. */
+    driver::gpio::Stub led;
+
+    /** Toggle button stub. */
+    driver::gpio::Stub toggleButton;
+
+    /** Temperature button stub. */
+    driver::gpio::Stub tempButton;
+
+    /** Debounce timer stub. */
+    driver::timer::Stub debounceTimer;
+
+    /** Toggle timer stub. */
+    driver::timer::Stub toggleTimer;
+
+    /** Temperature timer stub. */
+    driver::timer::Stub tempTimer;
+
+    /** Serial driver stub. */
+    driver::serial::Stub serial;
+
+    /** Watchdog timer stub. */
+    driver::watchdog::Stub watchdog;
+
+    /** EEPROM stream stub. */
+    driver::eeprom::Stub<EepromSize> eeprom;
+
+    /** Temperature sensor stub. */
+    driver::tempsensor::Stub tempSensor;
+
+    /** Logic implementation stub. */
+    std::unique_ptr<logic::Stub> logic;
 
     /** 
      * @brief Create a new mock instance.
+     */
+    Mock() noexcept
+        : led{}
+        , toggleButton{}
+        , tempButton{}
+        , debounceTimer{}
+        , toggleTimer{}
+        , tempTimer{}
+        , serial{}
+        , watchdog{}
+        , eeprom{}
+        , tempSensor{}
+        , logic{createLogic()}
+    {}
+
+    /**
+     * @brief Write LED state to memory.
      * 
-     * @param[in] silenceTrivialCalls True to silence trivial calls (default = true).
+     * @param[in] enable True to mark the LED as enabled, false otherwise.
      */
-    Mock(const bool silenceTrivialCalls = true);
-    
-    /**
-     * @brief Create a new logic instance.
-     * 
-     * @return Pointer to the new logic instance.
-     */
-    std::unique_ptr<logic::Interface> createLogic();
+    void writeLedMemState(const bool enable) noexcept
+    {
+        const std::uint8_t byte{enable ? logic->ledMemData() : static_cast<std::uint8_t>(0U)};
+        eeprom.writeByte(logic->ledMemAddr(), byte);
+    }
 
-    /**
-     * @brief Silence initialization calls.
-     */
-    void silenceInitCalls();
-
-    /**
-     * @brief Silence cleanup calls.
-     */
-    void silenceCleanupCalls();
-
-    /**
-     * @brief Silence status calls.
-     */
-    void silenceStatusCalls();
-
-    /** 
-     * @brief Set LED enablement bit in EEPROM. 
-     * 
-     * @param[in] enable True to set the enablement bit, false otherwise.
-     */
-    void setLedStatusInEeprom(const bool enable);
-
+private:
+    // -----------------------------------------------------------------------------
+    std::unique_ptr<logic::Stub> createLogic()
+    {
+        return std::make_unique<logic::Stub>(
+            led, toggleButton, tempButton, debounceTimer, toggleTimer, 
+            tempTimer, serial, watchdog, eeprom, tempSensor);
+    }
 };
 
 // -----------------------------------------------------------------------------
-Mock::Mock(const bool silenceTrivialCalls)
-    : led{}
-    , toggleButton{}
-    , tempButton{}
-    , debounceTimer{}
-    , toggleTimer{}
-    , tempTimer{}
-    , serial{}
-    , watchdog{}
-    , eeprom{}
-    , tempSensor{}
+void runLogicThread(logic::Interface& logic, bool& stop) 
 {
-    if (silenceTrivialCalls)
-    {
-        silenceInitCalls();
-        silenceCleanupCalls();
-        silenceStatusCalls();
-    }
+    // Run the logic loop as long as the stop flag is low.
+    logic.run(stop);
 }
 
 // -----------------------------------------------------------------------------
-std::unique_ptr<logic::Interface> Mock::createLogic()
+void stopLogicThread(const std::size_t timeout_ms, bool& stop) 
 {
-    // Return new logic instance.
-    return std::make_unique<logic::Logic>(
-        led, toggleButton, tempButton, debounceTimer, toggleTimer, 
-        tempTimer, serial, watchdog, eeprom, tempSensor);
-}
-
-// -----------------------------------------------------------------------------
-void Mock::silenceInitCalls()
-{
-    EXPECT_CALL(toggleButton, enableInterrupt(true)).WillOnce(Return());
-    EXPECT_CALL(tempButton, enableInterrupt(true)).WillOnce(Return());
-    EXPECT_CALL(tempTimer, start()).WillOnce(Return());
-    EXPECT_CALL(serial, print(_)).WillRepeatedly(Return());
-    EXPECT_CALL(serial, setEnabled(true)).WillOnce(Return());
-    EXPECT_CALL(watchdog, setEnabled(true)).WillOnce(Return());
-    EXPECT_CALL(eeprom, setEnabled(true)).WillOnce(Return());
-    EXPECT_CALL(watchdog, reset()).WillRepeatedly(Return());
-}
-
-// -----------------------------------------------------------------------------
-void Mock::silenceCleanupCalls()
-{
-    EXPECT_CALL(led, write(false)).WillOnce(Return());
-    EXPECT_CALL(toggleButton, enableInterrupt(false)).WillOnce(Return());
-    EXPECT_CALL(tempButton, enableInterrupt(false)).WillOnce(Return());
-    EXPECT_CALL(debounceTimer, stop()).WillRepeatedly(Return());
-    EXPECT_CALL(toggleTimer, stop()).WillRepeatedly(Return());
-    EXPECT_CALL(tempTimer, stop()).WillRepeatedly(Return());
-    EXPECT_CALL(serial, setEnabled(false)).WillOnce(Return());
-    EXPECT_CALL(watchdog, setEnabled(false)).WillOnce(Return());
-    EXPECT_CALL(eeprom, setEnabled(false)).WillOnce(Return());
-}
-
-// -----------------------------------------------------------------------------
-void Mock::silenceStatusCalls()
-{
-    ON_CALL(debounceTimer, isEnabled()).WillByDefault(Return(true));
-    ON_CALL(toggleTimer, isEnabled()).WillByDefault(Return(true));
-    ON_CALL(tempTimer, isEnabled()).WillByDefault(Return(true));
-    ON_CALL(serial, isEnabled()).WillByDefault(Return(true));
-    ON_CALL(watchdog, isEnabled()).WillByDefault(Return(true));
-    ON_CALL(eeprom, isEnabled()).WillByDefault(Return(true));
-
-    EXPECT_CALL(debounceTimer, isEnabled()).WillRepeatedly(Return(true));
-    EXPECT_CALL(toggleTimer, isEnabled()).WillRepeatedly(Return(true));
-    EXPECT_CALL(tempTimer, isEnabled()).WillRepeatedly(Return(true));
-    EXPECT_CALL(serial, isEnabled()).WillRepeatedly(Return(true));
-    EXPECT_CALL(watchdog, isEnabled()).WillRepeatedly(Return(true));
-    EXPECT_CALL(eeprom, isEnabled()).WillRepeatedly(Return(true));
-}
-
-// -----------------------------------------------------------------------------
-void Mock::setLedStatusInEeprom(const bool enabled)
-{
-    const std::uint8_t bitVal{static_cast<std::uint8_t>(enabled ? 1U : 0U)};
-    ON_CALL(eeprom, isAddressValid(_, _)).WillByDefault(Return(true));
-    ON_CALL(eeprom, readByte(_)).WillByDefault(Return(bitVal));
-    EXPECT_CALL(eeprom, isAddressValid(_, _)).WillRepeatedly(Return(true));
-    EXPECT_CALL(eeprom, readByte(_)).WillRepeatedly(Return(bitVal));
-}
-
-// -----------------------------------------------------------------------------
-void runThread(logic::Interface& logic, bool& stop) { logic.run(stop); }
-
-// -----------------------------------------------------------------------------
-void stopThread(const std::size_t waitTime_ms, bool& stop) 
-{
+    // Stop the logic loop on timeout.
     stop = false;
-    std::this_thread::sleep_for(std::chrono::milliseconds(waitTime_ms));
+    std::this_thread::sleep_for(std::chrono::milliseconds(timeout_ms));
     stop = true;
 }
 
 /**
  * @brief Logic run test.
  *
- *        Verify that the logic system can be constructed and run with all mock dependencies.
+ *        Verify that the the toggle button works as expected.
  */
-TEST(Logic, Run)
+TEST(Logic, ToggleButtonPress)
 {
     Mock mock{};
-    std::unique_ptr<logic::Interface> logic{mock.createLogic()};
-    mock.setLedStatusInEeprom(true);
+    logic::Interface& logic{*mock.logic};
+    mock.writeLedMemState(false);
 
-    // Run system for five seconds.
+    // Run system for 100 ms.
     bool stop{false};
-    constexpr std::size_t testDuration_ms{5000U};
-    std::thread t1{runThread, std::ref(*logic), std::ref(stop)};
-    std::thread t2{stopThread, testDuration_ms, std::ref(stop)};
+    constexpr std::size_t testDuration_ms{10U};
+    std::thread t1{runLogicThread, std::ref(logic), std::ref(stop)};
+    std::thread t2{stopLogicThread, testDuration_ms, std::ref(stop)};
     t1.join();
     t2.join();
     
-    // Case 1 - Simulate toggle button press, expect the toggle timer to be toggled.
+    // Ensure that the toggle timer and the LED is disabled at the start.
+    mock.led.write(false);
+    mock.toggleTimer.stop();
+
+    // Case 1 - Press the toggle button, simulate button event.
+    // Expect the toggle timer to be enabled.
     {
-        ON_CALL(mock.toggleButton, read()).WillByDefault(Return(true));
-        ON_CALL(mock.toggleTimer, isEnabled()).WillByDefault(Return(true));
-        EXPECT_CALL(mock.toggleButton, enableInterruptOnPort(false)).WillOnce(Return());
-        EXPECT_CALL(mock.debounceTimer, start()).WillOnce(Return());
-        EXPECT_CALL(mock.toggleTimer, toggle()).WillOnce(Return());
-        logic->handleButtonEvent();
+        mock.toggleButton.write(true);
+        logic.handleButtonEvent();
+        mock.toggleButton.write(false);
+        EXPECT_TRUE(mock.debounceTimer.isEnabled());
+        EXPECT_TRUE(mock.toggleTimer.isEnabled());
+    }
+
+    // Case 2 - Simulate that the toggle timer elapses, expect the LED to be enabled.
+    {
+        mock.toggleTimer.setTimedOut(true);
+        logic.handleToggleTimerTimeout();
+        EXPECT_TRUE(mock.led.read());
+    }
+
+    // Case 3 - Simulate that the toggle timer elapses again, expect the LED to be disabled.
+    {
+        mock.toggleTimer.setTimedOut(true);
+        logic.handleToggleTimerTimeout();
+        EXPECT_FALSE(mock.led.read());
+    }
+
+    // Case 4 - Simulate that the toggle timer elapses once more, expect the LED to be enabled.
+    {
+        mock.toggleTimer.setTimedOut(true);
+        logic.handleToggleTimerTimeout();
+        EXPECT_TRUE(mock.led.read());
+    }
+
+    // Case 5 - Press the toggle button once more, simulate button event.
+    // Expect the toggle timer to be disabled and the the LED is disabled at once.
+    {
+        mock.toggleButton.write(true);
+        logic.handleButtonEvent();
+        mock.toggleButton.write(false);
+        EXPECT_FALSE(mock.toggleTimer.isEnabled());
+        EXPECT_FALSE(mock.led.read());
     }
 }
 } // namespace

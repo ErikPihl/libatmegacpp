@@ -14,18 +14,6 @@
 
 namespace logic
 {
-/**
- * @brief Structure of LED state parameters.
- */
-namespace LedState
-{
-    /** LED state address in EEPROM. */
-    static constexpr uint8_t address{0U};
-
-    /** Enabled state value in EEPROM. */
-    static constexpr uint8_t enabled{1U};
-};
-
 // -----------------------------------------------------------------------------
 Logic::Logic(driver::gpio::Interface& led,
              driver::gpio::Interface& toggleButton,
@@ -164,13 +152,13 @@ void Logic::checkLedStateInEeprom() noexcept
 // -----------------------------------------------------------------------------
 void Logic::writeLedStateToEeprom() noexcept
 { 
-    myEeprom.write(LedState::address, myToggleTimer.isEnabled());
+    myEeprom.write(LedState::Address, myToggleTimer.isEnabled());
 }
 
 // -----------------------------------------------------------------------------
 bool Logic::readLedStateFromEeprom() const noexcept
 {
     uint8_t state{};
-    return myEeprom.read(LedState::address, state) ? LedState::enabled == state : false;
+    return myEeprom.read(LedState::Address, state) ? LedState::Enabled == state : false;
 }
 } // namespace logic

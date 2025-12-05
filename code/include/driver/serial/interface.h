@@ -91,7 +91,7 @@ bool Interface::printf(const char* format, const Args&... args) const noexcept
         // never user-supplied, so this use of snprintf is safe.
         #pragma GCC diagnostic push
         #pragma GCC diagnostic ignored "-Wformat-security"
-        static_cast<void>(snprintf(buffer, length, format, args...));
+        (void) (snprintf(buffer, length, format, args...));
         #pragma GCC diagnostic pop
         print(buffer);
     }

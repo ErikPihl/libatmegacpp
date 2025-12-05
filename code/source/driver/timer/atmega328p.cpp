@@ -97,10 +97,10 @@ Atmega328p* TimerParam::TimerParam::timers[TimerParam::circuitCount]{};
 CallbackArray<TimerParam::circuitCount> TimerParam::callbacks{};
 
 // -----------------------------------------------------------------------------
-constexpr uint32_t maxCount(const uint32_t elapseTimeMs) noexcept
+constexpr uint32_t maxCount(const uint32_t timeout_ms) noexcept
 {
-	return 0U < elapseTimeMs ? 
-        utils::round<uint32_t>(elapseTimeMs / TimerParam::interruptIntervalMs) : 0U;
+	return 0U < timeout_ms ? 
+        utils::round<uint32_t>(timeout_ms / TimerParam::interruptIntervalMs) : 0U;
 }
 
 // -----------------------------------------------------------------------------
@@ -122,9 +122,9 @@ void invokeCallback(const uint8_t timerIndex) noexcept
 } // namespace
 
 // -----------------------------------------------------------------------------
-Atmega328p::Atmega328p(const uint32_t elapseTimeMs, void (*callback)(), const bool startTimer) noexcept
+Atmega328p::Atmega328p(const uint32_t timeout_ms, void (*callback)(), const bool startTimer) noexcept
     : myHardware{Hardware::reserve()}
-	, myMaxCount{maxCount(elapseTimeMs)}
+	, myMaxCount{maxCount(timeout_ms)}
 	, myEnabled{false}
 {
     if (!myHardware) { return; }

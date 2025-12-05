@@ -27,9 +27,6 @@ ALL_FILES := $(SOURCE_FILES) $(TEST_FILES)
 # Main include directory.
 INC_DIR := ../include
 
-# Test include directory.
-TEST_DIR := include
-
 # Gtest directory.
 GTEST_DIR := /usr/include
 
@@ -37,7 +34,7 @@ GTEST_DIR := /usr/include
 CXX_COMPILER = g++
 
 # C++ compiler flags.
-COMPILER_FLAGS = -std=c++17 -Werror -Wall -I$(INC_DIR) -I$(TEST_DIR) -I$(GTEST_DIR) -DTESTSUITE
+COMPILER_FLAGS = -std=c++17 -Werror -Wall -I$(INC_DIR) -I$(GTEST_DIR) -DTESTSUITE
 
 # Linked libraries.
 LINK_LIBS = -lgtest -lgmock -lgtest_main -lpthread

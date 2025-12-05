@@ -108,5 +108,5 @@ enum class Atmega328p::Timeout : uint16_t
     Duration8192ms = 8192UL, // 8192 ms.
     Invalid,                 // Invalid timeout.
 };
-} // namespace atmega328p
+} // namespace watchdog
 } // namespace driver

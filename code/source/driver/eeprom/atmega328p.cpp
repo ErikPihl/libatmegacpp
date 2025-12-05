@@ -57,7 +57,7 @@ bool Atmega328p::isAddressValid(const uint16_t address, const uint8_t dataSize) 
 }
 
 // -----------------------------------------------------------------------------
-void Atmega328p::writeByte(const uint16_t address, const uint8_t data) const noexcept
+void Atmega328p::writeByte(const uint16_t address, const uint8_t data) noexcept
 {
     // Wait until EEPROM is ready to send the next byte.
     while (utils::read(EECR, EEPE));

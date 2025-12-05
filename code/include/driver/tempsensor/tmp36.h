@@ -18,13 +18,13 @@ class Interface;
 namespace tempsensor
 {
 /**
- * @brief Temperature sensor interface.
+ * @brief TMP36 temperature sensor implementation.
  */
 class Tmp36 final : public Interface
 {
 public:
     /**
-     * @brief Create a new TMP36 temperature sensor.
+     * @brief Constructor.
      * 
      * @param[in] pin Pin the temperature sensor is connected to. Must be an analog pin A0-A5.
      * @param[in] adc A/D converter for reading the input voltage from the sensor.

@@ -22,13 +22,13 @@ class Atmega328p final : public Interface
 {
 public:
     /**
-     * @brief Create a new timer with the given elapse time.
+     * @brief Constructor.
      *
-     * @param[in] elapseTimeMs The elapse time of timer in milliseconds.
+     * @param[in] timeout_ms The timeout in milliseconds.
      * @param[in] callback Callback to invoke on timeout (default = none).
      * @param[in] startTimer Start the timer immediately (default = false).
      */
-    explicit Atmega328p(const uint32_t elapseTimeMs, void (*callback)() = nullptr,
+    explicit Atmega328p(const uint32_t timeout_ms, void (*callback)() = nullptr,
                         const bool startTimer = false) noexcept;
 
     /**
