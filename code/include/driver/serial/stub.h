@@ -27,6 +27,7 @@ struct Stub : public Interface
      */
     Stub(const uint32_t baudRate_bps = 9600U) noexcept
         : myBaudRate_bps{baudRate_bps}
+        , myReceivedByte{}
         , myEnabled{true}
     {}
 
@@ -57,6 +58,13 @@ struct Stub : public Interface
      * @param[in] enable Indicate whether to enable the device.
      */
     void setEnabled(const bool enable) noexcept override { myEnabled = enable; }
+    
+    /**
+     * @brief Receive one byte of data.
+     * 
+     * @return The received byte.
+     */
+    uint8_t readByte() const noexcept override { return myReceivedByte; }
 
     /**
      * @brief Print the given string in the serial terminal.
@@ -66,15 +74,28 @@ struct Stub : public Interface
     void print(const char* str) const noexcept override
     {
 #ifdef TESTSUITE
+        // When testing, print the string in the terminal if the serial device is enabled 
+        // and the string is not null.
         if (myEnabled && (nullptr != str)) { std::cout << str; }   
 #else
+        // When running on firmware, do nothing.
         (void) (str);
 #endif
     }
 
+    /**
+     * @brief Simulate a received byte.
+     * 
+     * @param[in] byte The received byte.
+     */
+    void setByte(const uint8_t byte) noexcept { myReceivedByte = byte; }
+
 private:
     /** Baud rate in bps (bits per second). */
     const uint32_t myBaudRate_bps;
+
+    /** Received byte. */
+    uint8_t myReceivedByte;
 
     /** Indicate whether serial transmission is enabled. */
     bool myEnabled;

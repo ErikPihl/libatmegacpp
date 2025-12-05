@@ -50,6 +50,13 @@ public:
     virtual void setEnabled(const bool enable) noexcept = 0;
 
     /**
+     * @brief Receive one byte of data.
+     * 
+     * @return The received byte.
+     */
+    virtual uint8_t readByte() const noexcept = 0;
+
+    /**
      * @brief Print formatted string in the serial terminal. 
      * 
      *        If the formatted string contains format specifiers, the additional arguments are 

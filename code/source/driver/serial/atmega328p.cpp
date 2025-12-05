@@ -60,6 +60,16 @@ bool Atmega328p::isEnabled() const noexcept { return myEnabled; }
 void Atmega328p::setEnabled(const bool enable) noexcept { myEnabled = enable; }
 
 // -----------------------------------------------------------------------------
+uint8_t Atmega328p::readByte() const noexcept
+{
+    // Wait until data is available.
+    while (!utils::read(UCSR0A, RXC0));
+    
+    // Return the received byte.
+    return UDR0;
+}
+
+// -----------------------------------------------------------------------------
 Atmega328p::Atmega328p() noexcept 
     : myEnabled{true}
 { 
@@ -67,7 +77,7 @@ Atmega328p::Atmega328p() noexcept
     constexpr uint16_t baudRateValue{103U};
 
     // Enable UART transmission.
-    utils::set(UCSR0B, TXEN0);
+    utils::set(UCSR0B, TXEN0, RXEN0);
 
     // Set the data size to eight bits per byte.
     utils::set(UCSR0C, UCSZ00, UCSZ01);

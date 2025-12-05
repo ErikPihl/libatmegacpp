@@ -289,9 +289,11 @@ void delay_us(const std::uint16_t us) noexcept;
 #define TOIE2  0U
 
 #define UDRE0  5U
+#define RXEN0  4U
 #define TXEN0  3U
 #define UCSZ00 1U
 #define UCSZ01 2U
+#define RXC0   7U
 
 #define EEPE  1U
 #define EEMPE 2U

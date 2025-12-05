@@ -55,6 +55,13 @@ public:
      */
     void setEnabled(const bool enable) noexcept override;
 
+    /**
+     * @brief Receive one byte of data.
+     * 
+     * @return The received byte.
+     */
+    uint8_t readByte() const noexcept override;
+
     Atmega328p(const Atmega328p&)                      = delete; // No copy constructor.
     Atmega328p(Atmega328p&& other) noexcept            = delete; // No move constructor.
     Atmega328p& operator=(const Atmega328p&)           = delete; // No copy assignment.
