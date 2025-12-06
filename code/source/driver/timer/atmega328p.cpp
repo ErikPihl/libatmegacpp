@@ -109,15 +109,7 @@ void invokeCallback(const uint8_t timerIndex) noexcept
 	if (timerIndex >= TimerParam::circuitCount) { return; }
     auto timer{TimerParam::timers[timerIndex]};
 
-    if (timer)
-    {
-        timer->increment();
-
-        if (timer->hasTimedOut()) 
-		{ 
-			TimerParam::callbacks.invoke(timerIndex); 
-		}
-    }
+    if (timer) { timer->handleCallback(); }
 }
 } // namespace
 
@@ -148,14 +140,9 @@ bool Atmega328p::isInitialized() const noexcept { return nullptr != myHardware; 
 bool Atmega328p::isEnabled() const noexcept { return myEnabled; }
 
 // -----------------------------------------------------------------------------
-bool Atmega328p::hasTimedOut() noexcept
+bool Atmega328p::hasTimedOut() const noexcept
 {
-    if (!myEnabled || (myHardware->counter < myMaxCount)) { return false; } 
-	else 
-	{
-	    myHardware->counter = 0U;
-		return true;
-	}
+    return myEnabled && (myHardware->counter >= myMaxCount);
 }
 
 // -----------------------------------------------------------------------------
@@ -202,6 +189,18 @@ void Atmega328p::restart() noexcept
 }
 
 // -----------------------------------------------------------------------------
+void Atmega328p::handleCallback() noexcept
+{
+	increment();
+
+	if (hasTimedOut()) 
+	{ 
+		TimerParam::callbacks.invoke(myHardware->index); 
+		clearTimedOut();
+	}
+}
+
+// -----------------------------------------------------------------------------
 void Atmega328p::addCallback(void (*callback)()) const noexcept
 { 
     TimerParam::callbacks.add(callback, myHardware->index);
@@ -220,6 +219,9 @@ bool Atmega328p::increment() noexcept
 	myHardware->counter++; 
 	return true;
 }
+
+// -----------------------------------------------------------------------------
+void Atmega328p::clearTimedOut() noexcept { myHardware->counter = 0U; }
 
 // -----------------------------------------------------------------------------
 Atmega328p::Hardware* Atmega328p::Hardware::reserve() noexcept

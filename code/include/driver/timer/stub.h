@@ -51,7 +51,7 @@ struct Stub : public Interface
      *
      * @return True if the timer has timed out, false otherwise.
      */
-    bool hasTimedOut() noexcept override { return myEnabled && myTimedOut; }
+    bool hasTimedOut() const noexcept override { return myEnabled && myTimedOut; }
 
     /**
      * @brief Get the timeout of the timer.

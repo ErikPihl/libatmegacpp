@@ -55,12 +55,10 @@ public:
 
     /**
      * @brief Check whether the timer has timed out.
-     * 
-     *        The timer will restart automatically on timeout.
      *
      * @return True if the timer has timed out, false otherwise.
      */
-    bool hasTimedOut() noexcept override;
+    bool hasTimedOut() const noexcept override;
 
     /**
      * @brief Get the timeout of the timer.
@@ -96,24 +94,10 @@ public:
      */
     void restart() noexcept override;
 
-    /**
-     * @brief Add callback function for the timer.
-     *
-     * @param[in] callback Pointer to callback function.
+    /** 
+     * @brief Callback handler. 
      */
-    void addCallback(void (*callback)()) const noexcept;
-
-    /**
-     * @brief Remove callback function for the timer.
-     */
-    void removeCallback() const noexcept;
-
-    /**
-     * @brief Increment the timer if it's enabled.
-     *
-     * @return True if the timer was incremented, false otherwise.
-     */
-    bool increment() noexcept;
+    void handleCallback() noexcept;
 
     Atmega328p()                             = delete; // No default constructor.
     Atmega328p(const Atmega328p&)            = delete; // No copy constructor.
@@ -122,6 +106,11 @@ public:
     Atmega328p& operator=(Atmega328p&&)      = delete; // No move assignment.
 
 private:
+    void addCallback(void (*callback)()) const noexcept;
+    void removeCallback() const noexcept;
+    bool increment() noexcept;
+    void clearTimedOut() noexcept;
+
     /** Timer hardware structure. */
     struct Hardware;
 

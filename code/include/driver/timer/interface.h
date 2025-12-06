@@ -39,12 +39,10 @@ public:
 
     /**
      * @brief Check whether the timer has timed out.
-     * 
-     *        The timer will restart automatically on timeout.
      *
      * @return True if the timer has timed out, false otherwise.
      */
-    virtual bool hasTimedOut() noexcept = 0;
+    virtual bool hasTimedOut() const noexcept = 0;
 
     /**
      * @brief Get the timeout of the timer.

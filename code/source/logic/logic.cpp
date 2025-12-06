@@ -99,23 +99,26 @@ void Logic::handleButtonEvent() noexcept
 void Logic::handleDebounceTimerTimeout() noexcept
 {
     // Re-enable interrupts on the ports after debounce timer timeout.
-    myDebounceTimer.stop();
-    myToggleButton.enableInterruptOnPort(true);
-    myTempButton.enableInterruptOnPort(true);
+    if (myDebounceTimer.hasTimedOut())
+    {
+        myDebounceTimer.stop();
+        myToggleButton.enableInterruptOnPort(true);
+        myTempButton.enableInterruptOnPort(true);
+    }
 }
 
 // -----------------------------------------------------------------------------
 void Logic::handleToggleTimerTimeout() noexcept 
 {
     // Toggle the LED on toggle timer timeout. 
-    myLed.toggle(); 
+    if (myToggleTimer.hasTimedOut()) { myLed.toggle(); }
 }
 
 // -----------------------------------------------------------------------------
 void Logic::handleTempTimerTimeout() noexcept 
 { 
     // Read and print the temperature on temperature timer timeout.
-    printTemperature();
+    if (myTempTimer.hasTimedOut()) { printTemperature(); }
 }
 
 // -----------------------------------------------------------------------------
