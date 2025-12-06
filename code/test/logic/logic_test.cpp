@@ -78,17 +78,6 @@ struct Mock
         , logic{createLogic()}
     {}
 
-    /**
-     * @brief Write LED state to memory.
-     * 
-     * @param[in] enable True to mark the LED as enabled, false otherwise.
-     */
-    void writeLedMemState(const bool enable) noexcept
-    {
-        const std::uint8_t byte{enable ? logic->ledMemData() : static_cast<std::uint8_t>(0U)};
-        eeprom.writeByte(logic->ledMemAddr(), byte);
-    }
-
 private:
     // -----------------------------------------------------------------------------
     std::unique_ptr<logic::Stub> createLogic()
@@ -116,17 +105,17 @@ void stopLogicThread(const std::size_t timeout_ms, bool& stop)
 }
 
 /**
- * @brief Logic run test.
+ * @brief Toggle button test.
  *
- *        Verify that the the toggle button works as expected.
+ *        Verify that the system behaves as excepted when the toggle button works.
  */
 TEST(Logic, ToggleButtonPress)
 {
     Mock mock{};
+    mock.logic->writeLedStateToEeprom(false);
     logic::Interface& logic{*mock.logic};
-    mock.writeLedMemState(false);
 
-    // Run system for 100 ms.
+    // Run system for 10 ms.
     bool stop{false};
     constexpr std::size_t testDuration_ms{10U};
     std::thread t1{runLogicThread, std::ref(logic), std::ref(stop)};
@@ -134,9 +123,10 @@ TEST(Logic, ToggleButtonPress)
     t1.join();
     t2.join();
     
-    // Ensure that the toggle timer and the LED is disabled at the start.
-    mock.led.write(false);
-    mock.toggleTimer.stop();
+    // Expect the toggle timer and the LED to be disabled at the start.
+    EXPECT_FALSE(mock.led.read());
+    EXPECT_FALSE(mock.toggleTimer.isEnabled());
+    EXPECT_FALSE(mock.logic->readLedStateFromEeprom());
 
     // Case 1 - Press the toggle button, simulate button event.
     // Expect the toggle timer to be enabled.
@@ -152,6 +142,7 @@ TEST(Logic, ToggleButtonPress)
     {
         mock.toggleTimer.setTimedOut(true);
         logic.handleToggleTimerTimeout();
+        mock.toggleTimer.setTimedOut(false);
         EXPECT_TRUE(mock.led.read());
     }
 
@@ -159,6 +150,7 @@ TEST(Logic, ToggleButtonPress)
     {
         mock.toggleTimer.setTimedOut(true);
         logic.handleToggleTimerTimeout();
+        mock.toggleTimer.setTimedOut(false);
         EXPECT_FALSE(mock.led.read());
     }
 
@@ -166,6 +158,7 @@ TEST(Logic, ToggleButtonPress)
     {
         mock.toggleTimer.setTimedOut(true);
         logic.handleToggleTimerTimeout();
+        mock.toggleTimer.setTimedOut(false);
         EXPECT_TRUE(mock.led.read());
     }
 
@@ -177,6 +170,57 @@ TEST(Logic, ToggleButtonPress)
         mock.toggleButton.write(false);
         EXPECT_FALSE(mock.toggleTimer.isEnabled());
         EXPECT_FALSE(mock.led.read());
+    }
+}
+
+/**
+ * @brief Temperature button test.
+ *
+ *        Verify that the system behaves as excepted when the temperature button works.
+ */
+TEST(Logic, TempButtonPress)
+{
+    Mock mock{};
+    logic::Interface& logic{*mock.logic};
+
+    // Run system for 10 ms.
+    bool stop{false};
+    constexpr std::size_t testDuration_ms{10U};
+    std::thread t1{runLogicThread, std::ref(logic), std::ref(stop)};
+    std::thread t2{stopLogicThread, testDuration_ms, std::ref(stop)};
+    t1.join();
+    t2.join();
+    
+    // Expect the temperature timer to be disabled at the start.
+    EXPECT_TRUE(mock.tempTimer.isEnabled());
+
+    // Set the temperature to 25 degrees Celsius.
+    constexpr int16_t temp{25};
+    mock.tempSensor.setTemp(temp);
+
+    // Case 1 - Press the temperature button, simulate button event.
+    // Expect the temperature to be printed once.
+    {
+        const uint16_t tempPrintoutsBefore{mock.logic->tempPrintoutCount()};
+        mock.tempButton.write(true);
+        logic.handleButtonEvent();
+        mock.toggleButton.write(false);
+        EXPECT_TRUE(mock.debounceTimer.isEnabled());
+
+        const uint16_t tempPrintoutsAfter{mock.logic->tempPrintoutCount()};
+        EXPECT_EQ(tempPrintoutsAfter, tempPrintoutsBefore + 1U);
+    }
+
+    // Case 1 - Simulate temperature timer timeout.
+    // Expect the temperature to be printed once more.
+    {
+        const uint16_t tempPrintoutsBefore{mock.logic->tempPrintoutCount()};
+        mock.tempTimer.setTimedOut(true);
+        logic.handleTempTimerTimeout();
+        mock.tempTimer.setTimedOut(false);
+        
+        const uint16_t tempPrintoutsAfter{mock.logic->tempPrintoutCount()};
+        EXPECT_EQ(tempPrintoutsAfter, tempPrintoutsBefore + 1U);
     }
 }
 } // namespace

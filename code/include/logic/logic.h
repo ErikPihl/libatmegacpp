@@ -150,24 +150,13 @@ public:
     Logic& operator=(Logic&&)      = delete; // No move assignment.
 
 protected:
-     /**
-     * @brief Structure of LED state parameters.
-     */
-    struct LedState
-    {
-        /** LED state address in EEPROM. */
-        static constexpr uint8_t Address{0U};
-
-        /** Enabled state value in EEPROM. */
-        static constexpr uint8_t Enabled{1U};
-    };
-
-private:
     void handleToggleButtonPressed() noexcept;
     void handleTempButtonPressed() noexcept;
-    void checkLedStateInEeprom() noexcept;
-    void writeLedStateToEeprom() noexcept;
-    bool readLedStateFromEeprom() const noexcept;
+    void restoreLedStateFromEeprom() noexcept;
+
+    virtual void writeLedStateToEeprom(const bool enable) noexcept;
+    virtual bool readLedStateFromEeprom() const noexcept;
+    virtual void printTemperature() noexcept;
 
     /** Reference to the LED to toggle. */
     driver::gpio::Interface& myLed;

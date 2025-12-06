@@ -14,6 +14,13 @@
 
 namespace logic
 {
+namespace
+{
+/** LED state address in EEPROM. */
+constexpr uint16_t LedStateAddr{1000U};
+
+} // namespace
+
 // -----------------------------------------------------------------------------
 Logic::Logic(driver::gpio::Interface& led,
              driver::gpio::Interface& toggleButton,
@@ -43,7 +50,7 @@ Logic::Logic(driver::gpio::Interface& led,
     mySerial.setEnabled(true);
     myWatchdog.setEnabled(true);
     myEeprom.setEnabled(true);
-    checkLedStateInEeprom();
+    restoreLedStateFromEeprom();
 }
 
 // -----------------------------------------------------------------------------
@@ -108,8 +115,7 @@ void Logic::handleToggleTimerTimeout() noexcept
 void Logic::handleTempTimerTimeout() noexcept 
 { 
     // Read and print the temperature on temperature timer timeout.
-    const int16_t temperature{myTempSensor.read()};
-    mySerial.printf("Temperature: %d\n", temperature);
+    printTemperature();
 }
 
 // -----------------------------------------------------------------------------
@@ -117,7 +123,7 @@ void Logic::handleToggleButtonPressed() noexcept
 {
     // Toggle the toggle timer on pressdown, safe the current LED state in EEPROM.
     myToggleTimer.toggle();
-    writeLedStateToEeprom();
+    writeLedStateToEeprom(myToggleTimer.isEnabled());
 
     if (myToggleTimer.isEnabled()) { mySerial.printf("Toggle timer enabled!\n"); }
     else
@@ -134,14 +140,14 @@ void Logic::handleTempButtonPressed() noexcept
 {
     // Read and print the temperature on pressdown.
     // Restart the temperature timer.
-    const int16_t temperature{myTempSensor.read()};
-    mySerial.printf("Temperature: %d\n", temperature);
+    printTemperature();
     myTempTimer.restart();
 }
 
 // -----------------------------------------------------------------------------
-void Logic::checkLedStateInEeprom() noexcept
+void Logic::restoreLedStateFromEeprom() noexcept
 {
+    // Start the toggle timer if the LED was enabled before poweroff.
     if (readLedStateFromEeprom())
     {
         myToggleTimer.start();
@@ -150,15 +156,23 @@ void Logic::checkLedStateInEeprom() noexcept
 }
 
 // -----------------------------------------------------------------------------
-void Logic::writeLedStateToEeprom() noexcept
+void Logic::writeLedStateToEeprom(const bool enable) noexcept
 { 
-    myEeprom.write(LedState::Address, myToggleTimer.isEnabled());
+    myEeprom.write(LedStateAddr, static_cast<uint8_t>(enable));
 }
 
 // -----------------------------------------------------------------------------
 bool Logic::readLedStateFromEeprom() const noexcept
 {
     uint8_t state{};
-    return myEeprom.read(LedState::Address, state) ? LedState::Enabled == state : false;
+    return myEeprom.read(LedStateAddr, state) ? static_cast<bool>(state) : false;
+}
+
+// -----------------------------------------------------------------------------
+void Logic::printTemperature() noexcept
+{
+    // Read and print the temperature.
+    const int16_t temperature{myTempSensor.read()};
+    mySerial.printf("Temperature: %d °C\n", temperature);
 }
 } // namespace logic

@@ -73,14 +73,11 @@ struct Stub : public Interface
      */
     void print(const char* str) const noexcept override
     {
-#ifdef TESTSUITE
-        // When testing, print the string in the terminal if the serial device is enabled 
-        // and the string is not null.
-        if (myEnabled && (nullptr != str)) { std::cout << str; }   
-#else
-        // When running on firmware, do nothing.
-        (void) (str);
-#endif
+        // Print in the terminal when testing.
+        if ((!myEnabled) || (NULL == str)) { return; }
+        #ifdef TESTSUITE
+             std::cout << str;
+        #endif
     }
 
     /**
