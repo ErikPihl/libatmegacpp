@@ -21,6 +21,7 @@ struct Stub : public Interface
      */
     Stub() noexcept
         : myVal{false}
+        , myInterruptEnabled{false}
     {}
 
     /**
@@ -56,18 +57,31 @@ struct Stub : public Interface
      * 
      * @param[in] enable True to enable pin change interrupt for the GPIO, false otherwise.
      */
-    void enableInterrupt(const bool enable) noexcept override { (void) (enable); }
+    void enableInterrupt(const bool enable) noexcept override { myInterruptEnabled = enable; }
 
     /**
      * @brief Enable pin change interrupt for I/O port associated with the GPIO.
      * 
      * @param[in] enable True to enable pin change interrupt for the I/O port, false otherwise.
      */
-    void enableInterruptOnPort(const bool enable) noexcept override { (void) (enable); }
+    void enableInterruptOnPort(const bool enable) noexcept override 
+    { 
+        myInterruptEnabled = enable; 
+    }
+
+    /**
+     * @brief Check whether interrupt is enabled for the GPIO.
+     * 
+     * @return True if interrupt is enabled for the GPIO, false otherwise.
+     */
+    bool isInterruptEnabled() const noexcept { return myInterruptEnabled; }
 
 private:
     /** Value of the GPIO pin (true = high, false = low). */
     bool myVal;
+
+    /** Indicate whether interrupts are enabled for the GPIO. */
+    bool myInterruptEnabled;
 };
 } // namespace gpio
 } // namespace driver

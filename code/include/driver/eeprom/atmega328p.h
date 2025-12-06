@@ -28,6 +28,13 @@ public:
     static Interface& getInstance() noexcept;
 
     /**
+     * @brief Get the size of the EEPROM.
+     * 
+     * @return The size of the EEPROM in bytes.
+     */
+    uint16_t size() const noexcept override;
+
+    /**
      * @brief Check whether the EEPROM stream is initialized.
      * 
      * @return True if the EEPROM stream is initialized, false otherwise.

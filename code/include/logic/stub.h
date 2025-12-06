@@ -8,32 +8,45 @@
 namespace logic
 {
 /**
- * @brief Logic stub for exposing protected members and constants for unit tests.
+ * @brief Logic stub for testing.
  */
-struct Stub : public Logic
+class Stub final : public Logic
 {
+public:
     /** Inherit constructors from Logic. */
     using Logic::Logic;
 
     /**
-     * @brief Write LED state to EEPROM.
-     * 
-     * @param[in] enable True to mark the LED as enabled, false otherwise.
+     * @brief Destructor.
      */
-    void writeLedStateToEeprom(const bool enable) noexcept override
+    ~Stub() noexcept override = default;
+
+    /**
+     * @brief Get the toggle state address in EEPROM.
+     * 
+     * @return The toggle state address in EEPROM.
+     */
+    static uint16_t toggleStateAddr() noexcept { return ToggleStateAddr; }
+
+    /**
+     * @brief Write toggle state to EEPROM.
+     * 
+     * @param[in] enable Toggle state (true = enabled).
+     */
+    void writeToggleStateToEeprom(const bool enable) noexcept override
     {
-        myEeprom.write(LedStateAddr, static_cast<uint8_t>(enable));
+        myEeprom.write(ToggleStateAddr, static_cast<uint8_t>(enable));
     }
 
     /**
      * @brief Read LED state from EEPROM.
      * 
-     * @return True if the LED is enabled, false otherwise.
+     * @return The toggle state (true = enabled).
      */
-    bool readLedStateFromEeprom() const noexcept override 
+    bool readToggleStateFromEeprom() const noexcept override 
     { 
         uint8_t state{};
-        return myEeprom.read(LedStateAddr, state) ? static_cast<bool>(state) : false;
+        return myEeprom.read(ToggleStateAddr, state) ? static_cast<bool>(state) : false;
     }
 
     /**
@@ -54,9 +67,6 @@ struct Stub : public Logic
     uint16_t tempPrintoutCount() const noexcept { return myTempPrintouts; }
 
 private:
-    /** LED address in EEPROM. */
-    static constexpr uint16_t LedStateAddr{0U};
-
     /** The number of temperature printouts. */
     uint16_t myTempPrintouts{};
 };

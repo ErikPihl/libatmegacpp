@@ -14,13 +14,6 @@
 
 namespace logic
 {
-namespace
-{
-/** LED state address in EEPROM. */
-constexpr uint16_t LedStateAddr{1000U};
-
-} // namespace
-
 // -----------------------------------------------------------------------------
 Logic::Logic(driver::gpio::Interface& led,
              driver::gpio::Interface& toggleButton,
@@ -50,7 +43,9 @@ Logic::Logic(driver::gpio::Interface& led,
     mySerial.setEnabled(true);
     myWatchdog.setEnabled(true);
     myEeprom.setEnabled(true);
-    restoreLedStateFromEeprom();
+
+    // Enable the toggle timer if it was enabled before poweroff.
+    restoreToggleStateFromEeprom();
 }
 
 // -----------------------------------------------------------------------------
@@ -85,6 +80,9 @@ void Logic::run(const bool& stop) noexcept
 // -----------------------------------------------------------------------------
 void Logic::handleButtonEvent() noexcept
 {
+    // Ignore if this call was done manually.
+    if (myDebounceTimer.isEnabled()) { return; }
+    
     // Disable interrupts on the I/O ports to mitigate effects of debouncing.
     myToggleButton.enableInterruptOnPort(false);
     myTempButton.enableInterruptOnPort(false);
@@ -92,7 +90,7 @@ void Logic::handleButtonEvent() noexcept
 
     // Handle specific button event when pressed.
     if (myToggleButton.read()) { handleToggleButtonPressed(); }
-    else if (myTempButton.read()) { handleTempButtonPressed(); }
+    if (myTempButton.read()) { handleTempButtonPressed(); }
 }
 
 // -----------------------------------------------------------------------------
@@ -126,7 +124,7 @@ void Logic::handleToggleButtonPressed() noexcept
 {
     // Toggle the toggle timer on pressdown, safe the current LED state in EEPROM.
     myToggleTimer.toggle();
-    writeLedStateToEeprom(myToggleTimer.isEnabled());
+    writeToggleStateToEeprom(myToggleTimer.isEnabled());
 
     if (myToggleTimer.isEnabled()) { mySerial.printf("Toggle timer enabled!\n"); }
     else
@@ -148,10 +146,10 @@ void Logic::handleTempButtonPressed() noexcept
 }
 
 // -----------------------------------------------------------------------------
-void Logic::restoreLedStateFromEeprom() noexcept
+void Logic::restoreToggleStateFromEeprom() noexcept
 {
     // Start the toggle timer if the LED was enabled before poweroff.
-    if (readLedStateFromEeprom())
+    if (readToggleStateFromEeprom())
     {
         myToggleTimer.start();
         mySerial.printf("Toggle timer enabled!\n");
@@ -159,16 +157,16 @@ void Logic::restoreLedStateFromEeprom() noexcept
 }
 
 // -----------------------------------------------------------------------------
-void Logic::writeLedStateToEeprom(const bool enable) noexcept
+void Logic::writeToggleStateToEeprom(const bool enable) noexcept
 { 
-    myEeprom.write(LedStateAddr, static_cast<uint8_t>(enable));
+    myEeprom.write(ToggleStateAddr, static_cast<uint8_t>(enable));
 }
 
 // -----------------------------------------------------------------------------
-bool Logic::readLedStateFromEeprom() const noexcept
+bool Logic::readToggleStateFromEeprom() const noexcept
 {
     uint8_t state{};
-    return myEeprom.read(LedStateAddr, state) ? static_cast<bool>(state) : false;
+    return myEeprom.read(ToggleStateAddr, state) ? static_cast<bool>(state) : false;
 }
 
 // -----------------------------------------------------------------------------

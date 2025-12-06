@@ -19,6 +19,9 @@ namespace eeprom
 template<uint16_t MemSize>
 struct Stub : public Interface
 {
+    // Generate a compiler error if the EEPROM size is set to 0.
+    static_assert(0U < MemSize, "EEPROM size must be larger than 0!");
+
     /**
      * @brief Create a new EEPROM stub instance.
      */
@@ -26,6 +29,13 @@ struct Stub : public Interface
         : myMemory{}
         , myEnabled{true}
     {}
+
+    /**
+     * @brief Get the size of the EEPROM.
+     * 
+     * @return The size of the EEPROM in bytes.
+     */
+    uint16_t size() const noexcept override { return MemSize; }
 
     /**
      * @brief Check whether the EEPROM stream is initialized.

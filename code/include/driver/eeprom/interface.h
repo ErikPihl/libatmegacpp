@@ -23,6 +23,13 @@ public:
     virtual ~Interface() noexcept = default;
 
     /**
+     * @brief Get the size of the EEPROM.
+     * 
+     * @return The size of the EEPROM in bytes.
+     */
+    virtual uint16_t size() const noexcept = 0;
+
+    /**
      * @brief Check whether the EEPROM stream is initialized.
      * 
      * @return True if the EEPROM stream is initialized, false otherwise.

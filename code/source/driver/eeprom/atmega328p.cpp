@@ -17,13 +17,11 @@ namespace
 struct EepromParam
 {
     /** Size of the EEPROM in bytes. */
-    static constexpr size_t Size{1024U};
+    static constexpr uint16_t Size{1024U};
 
     /** Highest EEPROM address. */
-    static constexpr size_t MaxAddress{Size - 1U};
+    static constexpr uint16_t MaxAddress{Size - 1U};
 };
-
-
 } // namespace
 
 // -----------------------------------------------------------------------------
@@ -35,6 +33,9 @@ Interface& Atmega328p::getInstance() noexcept
     // Return a reference to the singleton EEPROM instance, cast to the corresponding interface.
     return myInstance; 
 }
+
+// -----------------------------------------------------------------------------
+uint16_t Atmega328p::size() const noexcept { return EepromParam::Size; }
 
 // -----------------------------------------------------------------------------
 bool Atmega328p::isInitialized() const noexcept { return true; }

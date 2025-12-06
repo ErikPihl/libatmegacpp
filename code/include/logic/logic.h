@@ -152,11 +152,14 @@ public:
 protected:
     void handleToggleButtonPressed() noexcept;
     void handleTempButtonPressed() noexcept;
-    void restoreLedStateFromEeprom() noexcept;
+    void restoreToggleStateFromEeprom() noexcept;
 
-    virtual void writeLedStateToEeprom(const bool enable) noexcept;
-    virtual bool readLedStateFromEeprom() const noexcept;
+    virtual void writeToggleStateToEeprom(const bool enable) noexcept;
+    virtual bool readToggleStateFromEeprom() const noexcept;
     virtual void printTemperature() noexcept;
+
+    /** Toggle state address in EEPROM. */
+    static constexpr uint16_t ToggleStateAddr{0U};
 
     /** Reference to the LED to toggle. */
     driver::gpio::Interface& myLed;
