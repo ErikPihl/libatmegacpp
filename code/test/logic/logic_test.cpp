@@ -29,6 +29,9 @@ namespace
 template <std::uint16_t EepromSize = 1024U>
 struct Mock final
 {
+    // Generate a compiler error if the EEPROM size is set to 0.
+    static_assert(0U < EepromSize, "EEPROM size must be greater than 0!");
+
     /** LED stub. */
     driver::gpio::Stub led;
 
@@ -353,16 +356,29 @@ TEST(Logic, TempHandling)
  */
 TEST(Logic, Eeprom)
 {
-    // Case 1 - Mark the toggle timer to have been enabled before poweroff.
+    // Case 1 - Verify that the toggle timer is disabled at startup if its EEPROM bit is not set.
+    // This simulates the timer being disabled before the last poweroff.
     {    
+        // Create logic implementation and run the system.
+        Mock mock{};
+        mock.createLogic();
+
+        // Verify that the toggle timer is disabled after initialization.
+        EXPECT_FALSE(mock.toggleTimer.isEnabled());
+    }
+
+    // Case 2 - Verify that the toggle timer is enabled at startup if its EEPROM bit is set.
+    // This simulates the timer being enabled before the last poweroff.
+    {    
+        // Mark the toggle timer to have been enabled before poweroff by setting the
+        // associated bit in EEPROM before creating the logic implementation.
         Mock mock{};
         mock.eeprom.writeByte(logic::Stub::toggleStateAddr(), true);
         
         // Create logic implementation and run the system.
-        logic::Interface& logic{mock.createLogic()};
-        (void) (logic);
+        mock.createLogic();
 
-        // Verify that the toggle timer is enabled if the LED state of the EEPROM.
+        // Verify that the toggle timer was enabled during initialization.
         EXPECT_TRUE(mock.toggleTimer.isEnabled());
     }
 }
