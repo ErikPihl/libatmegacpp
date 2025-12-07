@@ -27,7 +27,7 @@ using namespace driver;
 namespace
 {
 /** Pointer to the logic implementation. */
-logic::Logic* myLogic{nullptr};
+logic::Interface* myLogic{nullptr};
 
 namespace callback
 {
