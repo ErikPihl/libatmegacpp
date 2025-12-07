@@ -1,5 +1,5 @@
 /**
- * @brief ADC stub implementation.
+ * @brief ADC driver stub.
  */
 #pragma once
 
@@ -13,23 +13,29 @@ namespace driver
 namespace adc
 {
 /**
- * @brief ADC stub implementation.
+ * @brief ADC driver stub.
  */
-struct Stub : public Interface
+class Stub final : public Interface
 {
+public:
     /**
      * @brief Create a new ADC stub.
      * 
      * @param[in] resolution ADC resolution (default = 10 bits).
      * @param[in] supplyVoltage Supply voltage (default = 5 V).
      */
-    Stub(const uint8_t resolution = 10U, const double supplyVoltage = 5.0) noexcept
+    explicit Stub(const uint8_t resolution = 10U, const double supplyVoltage = 5.0) noexcept
         : mySupplyVoltage{supplyVoltage}
         , myMaxVal{static_cast<uint16_t>(pow(2U, resolution) - 1U)}
         , myAdcVal{}
         , myResolution{resolution}
         , myEnabled{true}
     {}
+
+    /**
+     * @brief Destructor.
+     */
+    ~Stub() noexcept override = default;
 
     /**
      * @brief Get the resolution of the ADC.
@@ -118,6 +124,12 @@ struct Stub : public Interface
      * @return True if the channel is valid, false otherwise.
      */
     bool isChannelValid(const uint8_t channel) const noexcept override { return true; }
+
+    Stub()                       = delete; // No default constructor.
+    Stub(const Stub&)            = delete; // No copy constructor.
+    Stub(Stub&&)                 = delete; // No move constructor.
+    Stub& operator=(const Stub&) = delete; // No copy assignment.
+    Stub& operator=(Stub&&)      = delete; // No move assignment.
 
 private:
     /** Supply voltage. */

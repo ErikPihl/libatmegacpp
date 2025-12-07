@@ -14,8 +14,9 @@ namespace watchdog
 /**
  * @brief Watchdog timer stub.
  */
-struct Stub : public Interface
+class Stub final : public Interface
 {
+public:
     /**
      * @brief Constructor.
      * 
@@ -24,6 +25,11 @@ struct Stub : public Interface
     Stub(const uint16_t timeout_ms = 1024U) noexcept
         : myTimeout_ms{timeout_ms}
     {}
+
+    /**
+     * @brief Destructor.
+     */
+    ~Stub() noexcept override = default;
 
     /**
      * @brief Check whether the watchdog timer is initialized.
@@ -57,6 +63,11 @@ struct Stub : public Interface
      * @brief Reset the watchdog timer.
      */
     void reset() noexcept override {}
+
+    Stub(const Stub&)            = delete; // No copy constructor.
+    Stub(Stub&&)                 = delete; // No move constructor.
+    Stub& operator=(const Stub&) = delete; // No copy assignment.
+    Stub& operator=(Stub&&)      = delete; // No move assignment.
 
 private:
     /** Watchdog timeout in ms. */

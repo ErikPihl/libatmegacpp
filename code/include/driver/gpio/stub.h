@@ -12,10 +12,11 @@ namespace driver
 namespace gpio
 {
 /**
- * @brief GPIO stub.
+ * @brief GPIO driver stub.
  */
-struct Stub : public Interface
+class Stub final : public Interface
 {
+public:
     /**
      * @brief Create a new GPIO stub instance.
      */
@@ -23,6 +24,11 @@ struct Stub : public Interface
         : myVal{false}
         , myInterruptEnabled{false}
     {}
+
+    /**
+     * @brief Destructor.
+     */
+    ~Stub() noexcept override = default;
 
     /**
      * @brief Check whether the GPIO is initialized.
@@ -75,6 +81,11 @@ struct Stub : public Interface
      * @return True if interrupt is enabled for the GPIO, false otherwise.
      */
     bool isInterruptEnabled() const noexcept { return myInterruptEnabled; }
+
+    Stub(const Stub&)            = delete; // No copy constructor.
+    Stub(Stub&&)                 = delete; // No move constructor.
+    Stub& operator=(const Stub&) = delete; // No copy assignment.
+    Stub& operator=(Stub&&)      = delete; // No move assignment.
 
 private:
     /** Value of the GPIO pin (true = high, false = low). */

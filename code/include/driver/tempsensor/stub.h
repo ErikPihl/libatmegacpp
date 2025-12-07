@@ -14,14 +14,20 @@ namespace tempsensor
 /**
  * @brief Temperature sensor interface.
  */
-struct Stub : public Interface
+class Stub final : public Interface
 {
+public:
     /**
      * @brief Constructor.
      */
     Stub() noexcept
         : myTemp{}
     {}
+
+    /**
+     * @brief Destructor.
+     */
+    ~Stub() noexcept override = default;
 
     /**
      * @brief Check if the temperature sensor is initialized.
@@ -43,6 +49,11 @@ struct Stub : public Interface
      * @param[in] temp Temperature.
      */
     void setTemp(const int16_t temp) noexcept { myTemp = temp; }
+
+    Stub(const Stub&)            = delete; // No copy constructor.
+    Stub(Stub&&)                 = delete; // No move constructor.
+    Stub& operator=(const Stub&) = delete; // No copy assignment.
+    Stub& operator=(Stub&&)      = delete; // No move assignment.
 
 private:
     /** Temperature sensor value. */

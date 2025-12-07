@@ -27,7 +27,7 @@ namespace
  * @tparam EepromSize EEPROM size in bytes (default = 1024).
  */
 template <std::uint16_t EepromSize = 1024U>
-struct Mock
+struct Mock final
 {
     /** LED stub. */
     driver::gpio::Stub led;
@@ -63,7 +63,7 @@ struct Mock
     std::unique_ptr<logic::Stub> logicImpl;
 
     /** 
-     * @brief Create a new mock instance.
+     * @brief Constructor.
      */
     Mock() noexcept
         : led{}
@@ -78,6 +78,11 @@ struct Mock
         , tempSensor{}
         , logicImpl{nullptr}
     {}
+
+    /**
+     * @brief Destructor.
+     */
+    ~Mock() noexcept = default;
 
     /**
      * @brief Create logic implementation.
@@ -109,6 +114,11 @@ struct Mock
         t1.join();
         t2.join();
     }
+
+    Mock(const Mock&)            = delete; // No copy constructor.
+    Mock(Mock&&)                 = delete; // No move constructor.
+    Mock& operator=(const Mock&) = delete; // No copy assignment.
+    Mock& operator=(Mock&&)      = delete; // No move assignment.
 
 private:
     // -----------------------------------------------------------------------------

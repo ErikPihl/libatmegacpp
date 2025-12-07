@@ -14,8 +14,9 @@ namespace timer
 /**
  * @brief Timer stub.
  */
-struct Stub : public Interface
+class Stub final : public Interface
 {
+public:
     /**
      * @brief Constructor.
      *
@@ -26,6 +27,11 @@ struct Stub : public Interface
         : myTimeout_ms{timeout_ms}
         , myEnabled{startTimer}
     {}
+
+    /**
+     * @brief Destructor.
+     */
+    ~Stub() noexcept override = default;
 
     /**
      * @brief Check if the timer is initialized.
@@ -105,6 +111,11 @@ struct Stub : public Interface
      * @param[in] timedOut True to indicate that the timer has timed out, false otherwise.
      */
     void setTimedOut(const bool timedOut) { myTimedOut = timedOut; }
+
+    Stub(const Stub&)            = delete; // No copy constructor.
+    Stub(Stub&&)                 = delete; // No move constructor.
+    Stub& operator=(const Stub&) = delete; // No copy assignment.
+    Stub& operator=(Stub&&)      = delete; // No move assignment.
 
 private:
     /** Timeout in ms. */

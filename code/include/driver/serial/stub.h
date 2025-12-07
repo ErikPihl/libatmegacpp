@@ -1,5 +1,5 @@
 /**
- * @brief Serial stub.
+ * @brief Serial driver stub.
  */
 #pragma once
 
@@ -16,20 +16,26 @@ namespace driver
 namespace serial
 {
 /**
- * @brief Serial stub.
+ * @brief Serial driver stub.
  */
-struct Stub : public Interface
+class Stub final : public Interface
 {
+public:
     /**
      * @brief Constructor.
      * 
      * @param[in] baudRate_bps The baud rate in bits per second (default = 9600 bps).
      */
-    Stub(const uint32_t baudRate_bps = 9600U) noexcept
+    explicit Stub(const uint32_t baudRate_bps = 9600U) noexcept
         : myBaudRate_bps{baudRate_bps}
         , myReceivedByte{}
         , myEnabled{true}
     {}
+
+    /**
+     * @brief Destructor.
+     */
+    ~Stub() noexcept override = default;
 
     /** 
      * @brief Get the baud rate of the serial device. 
@@ -86,6 +92,11 @@ struct Stub : public Interface
      * @param[in] byte The received byte.
      */
     void setByte(const uint8_t byte) noexcept { myReceivedByte = byte; }
+
+    Stub(const Stub&)            = delete; // No copy constructor.
+    Stub(Stub&&)                 = delete; // No move constructor.
+    Stub& operator=(const Stub&) = delete; // No copy assignment.
+    Stub& operator=(Stub&&)      = delete; // No move assignment.
 
 private:
     /** Baud rate in bps (bits per second). */

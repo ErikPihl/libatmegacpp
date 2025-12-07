@@ -14,11 +14,12 @@ namespace eeprom
 /**
  * @brief EEPROM stub.
  * 
- * @tparam MemSize EEPROM size in bytes.
+ * @tparam MemSize EEPROM size in bytes. Must be greater than 0.
  */
 template<uint16_t MemSize>
-struct Stub : public Interface
+class Stub final : public Interface
 {
+public:
     // Generate a compiler error if the EEPROM size is set to 0.
     static_assert(0U < MemSize, "EEPROM size must be larger than 0!");
 
@@ -29,6 +30,11 @@ struct Stub : public Interface
         : myMemory{}
         , myEnabled{true}
     {}
+
+    /**
+     * @brief Destructor.
+     */
+    ~Stub() noexcept override = default;
 
     /**
      * @brief Get the size of the EEPROM.
@@ -93,6 +99,11 @@ struct Stub : public Interface
     {
         return myEnabled && (MemSize > address) ? myMemory[address] : 0U;
     }
+
+    Stub(const Stub&)            = delete; // No copy constructor.
+    Stub(Stub&&)                 = delete; // No move constructor.
+    Stub& operator=(const Stub&) = delete; // No copy assignment.
+    Stub& operator=(Stub&&)      = delete; // No move assignment.
 
 private:
     /** EEPROM memory. */
