@@ -12,6 +12,8 @@
 #include "driver/tempsensor/tmp36.h"
 #include "utils/utils.h"
 
+#ifdef TESTSUITE
+
 namespace driver
 {
 namespace
@@ -48,7 +50,7 @@ constexpr std::int16_t convertToTemp(const std::uint16_t adcVal) noexcept
  */
 TEST(TempSensor_Tmp36, Initialization)
 {
-    constexpr std::int16_t defaultTemp{0};
+    constexpr std::int16_t defaultTemp{0U};
     constexpr std::uint16_t adcVal{100U};
 
     // Set up the ADC.
@@ -88,7 +90,7 @@ TEST(TempSensor_Tmp36, Initialization)
 }
 
 /**
- * @brief Temp sensor accuray test.
+ * @brief Temp sensor accuracy test.
  * 
  *        Verify that the temp sensor predicts accurately.
  */
@@ -129,3 +131,5 @@ TEST(TempSensor_Tmp36, Accuracy)
 }
 } // namespace
 } // namespace driver
+
+#endif /** IFDEF TESTSUITE */
