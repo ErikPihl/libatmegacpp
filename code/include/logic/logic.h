@@ -150,13 +150,19 @@ public:
     Logic& operator=(Logic&&)      = delete; // No move assignment.
 
 protected:
-    void handleToggleButtonPressed() noexcept;
-    void handleTempButtonPressed() noexcept;
-    void restoreToggleStateFromEeprom() noexcept;
+    driver::serial::Interface& serial() noexcept { return mySerial; }
+    driver::eeprom::Interface& eeprom() noexcept { return myEeprom; }
+    driver::tempsensor::Interface& tempSensor() noexcept { return myTempSensor; }
+    static uint16_t toggleStateAddr() noexcept { return ToggleStateAddr; }
 
     virtual void writeToggleStateToEeprom(const bool enable) noexcept;
     virtual bool readToggleStateFromEeprom() const noexcept;
     virtual void printTemperature() noexcept;
+
+private:
+    void handleToggleButtonPressed() noexcept;
+    void handleTempButtonPressed() noexcept;
+    void restoreToggleStateFromEeprom() noexcept;
 
     /** Toggle state address in EEPROM. */
     static constexpr uint16_t ToggleStateAddr{0U};

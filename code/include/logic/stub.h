@@ -16,46 +16,23 @@ public:
     /** Inherit constructors from Logic. */
     using Logic::Logic;
 
+    /** Expose protected methods from Logic as public for testing purposes. */
+    using Logic::toggleStateAddr;
+    using Logic::writeToggleStateToEeprom;
+    using Logic::readToggleStateFromEeprom;
+
     /**
      * @brief Destructor.
      */
     ~Stub() noexcept override = default;
-
-    /**
-     * @brief Get the toggle state address in EEPROM.
-     * 
-     * @return The toggle state address in EEPROM.
-     */
-    static uint16_t toggleStateAddr() noexcept { return ToggleStateAddr; }
-
-    /**
-     * @brief Write toggle state to EEPROM.
-     * 
-     * @param[in] enable Toggle state (true = enabled).
-     */
-    void writeToggleStateToEeprom(const bool enable) noexcept override
-    {
-        myEeprom.write(ToggleStateAddr, static_cast<uint8_t>(enable));
-    }
-
-    /**
-     * @brief Read LED state from EEPROM.
-     * 
-     * @return The toggle state (true = enabled).
-     */
-    bool readToggleStateFromEeprom() const noexcept override 
-    { 
-        uint8_t state{};
-        return myEeprom.read(ToggleStateAddr, state) ? static_cast<bool>(state) : false;
-    }
-
+    
     /**
      * @brief Print the temperature in the terminal.
      */
     void printTemperature() noexcept override
     {
         // Read and print the temperature.
-        mySerial.printf("Simulated temperature: %d °C\n", myTempSensor.read());
+        serial().printf("Simulated temperature: %d °C\n", tempSensor().read());
         myTempPrintouts++;
     }
 
@@ -65,6 +42,13 @@ public:
      * @return The number of temperature printouts.
      */
     uint16_t tempPrintoutCount() const noexcept { return myTempPrintouts; }
+
+    Stub()                       = delete; // No default constructor.
+    Stub(const Stub&)            = delete; // No copy constructor.
+    Stub(Stub&&)                 = delete; // No move constructor.
+    Stub& operator=(const Stub&) = delete; // No copy assignment.
+    Stub& operator=(Stub&&)      = delete; // No move assignment.
+
 
 private:
     /** The number of temperature printouts. */

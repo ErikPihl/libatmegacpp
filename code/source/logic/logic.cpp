@@ -120,6 +120,27 @@ void Logic::handleTempTimerTimeout() noexcept
 }
 
 // -----------------------------------------------------------------------------
+void Logic::writeToggleStateToEeprom(const bool enable) noexcept
+{ 
+    myEeprom.write(ToggleStateAddr, static_cast<uint8_t>(enable));
+}
+
+// -----------------------------------------------------------------------------
+bool Logic::readToggleStateFromEeprom() const noexcept
+{
+    uint8_t state{};
+    return myEeprom.read(ToggleStateAddr, state) ? static_cast<bool>(state) : false;
+}
+
+// -----------------------------------------------------------------------------
+void Logic::printTemperature() noexcept
+{
+    // Read and print the temperature.
+    const int16_t temperature{myTempSensor.read()};
+    mySerial.printf("Temperature: %d °C\n", temperature);
+}
+
+// -----------------------------------------------------------------------------
 void Logic::handleToggleButtonPressed() noexcept
 {
     // Toggle the toggle timer on pressdown, safe the current LED state in EEPROM.
@@ -154,26 +175,5 @@ void Logic::restoreToggleStateFromEeprom() noexcept
         myToggleTimer.start();
         mySerial.printf("Toggle timer enabled!\n");
     }
-}
-
-// -----------------------------------------------------------------------------
-void Logic::writeToggleStateToEeprom(const bool enable) noexcept
-{ 
-    myEeprom.write(ToggleStateAddr, static_cast<uint8_t>(enable));
-}
-
-// -----------------------------------------------------------------------------
-bool Logic::readToggleStateFromEeprom() const noexcept
-{
-    uint8_t state{};
-    return myEeprom.read(ToggleStateAddr, state) ? static_cast<bool>(state) : false;
-}
-
-// -----------------------------------------------------------------------------
-void Logic::printTemperature() noexcept
-{
-    // Read and print the temperature.
-    const int16_t temperature{myTempSensor.read()};
-    mySerial.printf("Temperature: %d °C\n", temperature);
 }
 } // namespace logic
