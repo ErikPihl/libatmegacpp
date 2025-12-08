@@ -22,9 +22,6 @@ public:
     /** Port aliases for GPIO pins. */
     struct Port;
 
-    /** Enumeration of GPIO directions. */
-    enum class Direction : uint8_t;
-
     /** Enumeration of I/O ports. */
     enum class IoPort : uint8_t;
 
@@ -42,27 +39,6 @@ public:
      * @brief Destructor.
      */
     ~Atmega328p() noexcept override;
-
-    /**
-     * @brief Get the pin number of the GPIO.
-     *
-     * @return The pin number of the GPIO.
-     */
-    uint8_t operator()() const noexcept;
-
-    /**
-     * @brief Get the pin number of the GPIO.
-     *
-     * @return The pin number of the GPIO.
-     */
-    uint8_t pin() const noexcept;
-
-    /**
-     * @brief Get I/O port associated with the GPIO.
-     *
-     * @return The I/O port associated with the GPIO as an enumerator of enum IoPort.
-     */
-    IoPort port() const noexcept;
 
     /**
      * @brief Check whether the GPIO is initialized.
@@ -128,11 +104,10 @@ private:
     /** GPIO hardware structure. */
     struct Hardware;
 
-    static Hardware* reserve(const uint8_t pin, const Direction direction) noexcept;
-    static Hardware* initHardware(const uint8_t pin) noexcept;
-
-    void setDirection(const Direction direction) noexcept;
-    void setCallback(void (*callback)()) const noexcept;
+    uint8_t getPhysicalPin() const noexcept;
+    void setup(const Direction direction, void (*callback)()) const noexcept;
+    static Hardware* reserve(const uint8_t id, const Direction direction) noexcept;
+    static Hardware* findHardware(const uint8_t id) noexcept;
 
     /** Hardware structure for I/O port B. */
     static Hardware myHwPortB;
@@ -144,10 +119,13 @@ private:
     static Hardware myHwPortD;
 
     /** Hardware structure associated with the GPIO. */
-    Hardware* myHardware;
+    Hardware* myHw;
+
+    /** GPIO ID. */
+    const uint8_t myId;
 
     /** Pin the GPIO is connected to. */
-    uint8_t myPin;
+    const uint8_t myPin;
 };
 
 /**
@@ -183,17 +161,6 @@ struct Atmega328p::Port
     static constexpr uint8_t C3{17}; // PORTC3 = pin 17.
     static constexpr uint8_t C4{18}; // PORTC4 = pin 18.
     static constexpr uint8_t C5{19}; // PORTC5 = pin 10.
-};
-
-/**
- * @brief Enumeration of GPIO directions.
- */
-enum class Atmega328p::Direction : uint8_t
-{ 
-    Input,       // Input without internal pull-up resistor enabled (tri-state).
-    InputPullup, // Input with internal pull-up resistor enabled.
-    Output,      // Output.
-    Count,       // The number of data direction alternatives.
 };
 
 /**

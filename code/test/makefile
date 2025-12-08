@@ -20,6 +20,7 @@ SOURCE_FILES := $(SOURCE_DIR)/arch/test/hw_platform.cpp \
 TEST_FILES := testsuite.cpp \
               driver/adc/atmega328p_test.cpp \
               driver/eeprom/atmega328p_test.cpp \
+              driver/gpio/atmega328p_test.cpp \
               driver/tempsensor/tmp36_test.cpp \
               logic/logic_test.cpp \
 

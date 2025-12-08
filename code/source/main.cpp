@@ -80,8 +80,8 @@ int main()
     constexpr uint32_t toggleTimerTimeout{100U};
     constexpr uint32_t tempTimerTimeout{60000U};
 
-    constexpr auto input{gpio::Atmega328p::Direction::InputPullup};
-    constexpr auto output{gpio::Atmega328p::Direction::Output};
+    constexpr auto input{gpio::Direction::InputPullup};
+    constexpr auto output{gpio::Direction::Output};
 
     // Initialize the GPIO devices.
     gpio::Atmega328p led{ledPin, output};
