@@ -42,6 +42,13 @@ public:
     virtual bool isInitialized() const noexcept = 0;
 
     /**
+     * @brief Get the data direction of the GPIO.
+     * 
+     * @return The data direction of the GPIO.
+     */
+    virtual Direction direction() const noexcept = 0;
+
+    /**
      * @brief Read input of the GPIO.
      * 
      * @return True if the input is high, false otherwise.

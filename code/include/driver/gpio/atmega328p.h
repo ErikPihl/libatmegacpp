@@ -11,6 +11,9 @@ namespace driver
 {
 namespace gpio
 {
+/** GPIO hardware structure. */
+struct Hardware;
+
 /**
  * @brief GPIO driver for ATmega328P.
  * 
@@ -49,6 +52,13 @@ public:
      * @return True if the GPIO is initialized, false otherwise.
      */
     bool isInitialized() const noexcept override;
+
+    /**
+     * @brief Get the data direction of the GPIO.
+     * 
+     * @return The data direction of the GPIO.
+     */
+    Direction direction() const noexcept override;
 
     /**
      * @brief Read input of the GPIO.
@@ -101,25 +111,18 @@ public:
     Atmega328p& operator=(Atmega328p&&)      = delete; // No move assignment.
 
 private:
-    /** GPIO hardware structure. */
-    struct Hardware;
-
+    IoPort getIoPort(const uint8_t id) const noexcept;
     uint8_t getPhysicalPin() const noexcept;
-    void setup(const Direction direction, void (*callback)()) const noexcept;
-    static Hardware* reserve(const uint8_t id, const Direction direction) noexcept;
-    static Hardware* findHardware(const uint8_t id) noexcept;
-
-    /** Hardware structure for I/O port B. */
-    static Hardware myHwPortB;
-    
-    /** Hardware structure for I/O port C. */
-    static Hardware myHwPortC;
-
-    /** Hardware structure for I/O port D. */
-    static Hardware myHwPortD;
+    bool initHw() noexcept;
 
     /** Hardware structure associated with the GPIO. */
     Hardware* myHw;
+
+    /** Data direction. */
+    const Direction myDirection;
+
+    /** Associated I/O port. */
+    const IoPort myIoPort;
 
     /** GPIO ID. */
     const uint8_t myId;
