@@ -1,5 +1,5 @@
 /**
- * @brief Test cases for the TMP36 temperature sensor.
+ * @brief Unit tests for the TMP36 temperature sensor.
  */
 #include <cstdint>
 #include <limits>
@@ -18,6 +18,21 @@ namespace driver
 {
 namespace
 {
+// -----------------------------------------------------------------------------
+adc::Interface& setupAdc() noexcept
+{
+    // Reset all used ADC registers.
+    ADMUX  = 0U;
+    ADCSRA = 0U;
+    ADC    = 0U;
+
+    // Set the ADC interrupt flag so that we don't get stuck in the read loop.
+    utils::set(ADCSRA, ADIF);
+
+    // Return a reference to the singleton ADC instance.
+    return adc::Atmega328p::getInstance();
+}
+
 // -----------------------------------------------------------------------------
 constexpr double computeInputVoltage(const std::uint16_t adcVal) noexcept
 {
@@ -54,9 +69,8 @@ TEST(TempSensor_Tmp36, Initialization)
     constexpr std::uint16_t adcVal{100U};
 
     // Set up the ADC.
-    utils::set(ADCSRA, ADIF);
+    adc::Interface& adc{setupAdc()};
     ADC = adcVal;
-    adc::Interface& adc{adc::Atmega328p::getInstance()};
 
      // Expect that the ADC was initialized successfully.
     EXPECT_TRUE(adc.isInitialized());
@@ -100,8 +114,7 @@ TEST(TempSensor_Tmp36, Accuracy)
     constexpr std::size_t stepVal{10U};
 
     // Set up the ADC.
-    utils::set(ADCSRA, ADIF);
-    adc::Interface& adc{adc::Atmega328p::getInstance()};
+    adc::Interface& adc{setupAdc()};
 
     // Expect that the ADC was initialized successfully and that the sensor pin is within the 
     // valid range for the ADC.
@@ -132,4 +145,4 @@ TEST(TempSensor_Tmp36, Accuracy)
 } // namespace
 } // namespace driver
 
-#endif /** IFDEF TESTSUITE */
+#endif /** TESTSUITE */

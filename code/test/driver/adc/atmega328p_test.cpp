@@ -1,5 +1,5 @@
 /**
- * @brief Test cases for the Atmega328p ADC.
+ * @brief Unit tests for the Atmega328p ADC.
  */
 #include <cstdint>
 
@@ -31,6 +31,51 @@ constexpr double computeInputVoltage(const std::uint16_t adcVal) noexcept
     return computeDutyCycle(adcVal) * supplyVoltage;
 }
 
+// -----------------------------------------------------------------------------
+adc::Interface& setupAdc() noexcept
+{
+    // Reset all used ADC registers.
+    ADMUX  = 0U;
+    ADCSRA = 0U;
+    ADC    = 0U;
+
+    // Set the ADC interrupt flag so that we don't get stuck in the read loop.
+    utils::set(ADCSRA, ADIF);
+
+    // Return a reference to the singleton ADC instance.
+    return adc::Atmega328p::getInstance();
+}
+
+/**
+ * @brief ADC initialization test.
+ * 
+ *        Verify that the ADC is initialized correctly.
+ */
+TEST(Adc_Atmega328p, Initialization)
+{
+    // Set up the ADC.
+    adc::Interface& adc{setupAdc()};
+
+    // Expect the interval reference voltage to be used.
+    EXPECT_TRUE(utils::read(ADMUX, REFS0));
+
+    // Expect an ADC conversion to be performed at startup.
+    {
+        // Expect the ADC enablement flag to be set.
+        EXPECT_TRUE(utils::read(ADCSRA, ADEN));
+
+        // Expect the start ADC conversion flag to be set.
+        EXPECT_TRUE(utils::read(ADCSRA, ADSC));
+
+        // Expect the prescaler bits to all be set for highest possible approximation.
+        EXPECT_TRUE(utils::read(ADCSRA, ADPS0));
+        EXPECT_TRUE(utils::read(ADCSRA, ADPS1));
+        EXPECT_TRUE(utils::read(ADCSRA, ADPS2));
+    }
+    // Expect that the ADC was initialized successfully.
+    EXPECT_TRUE(adc.isInitialized());
+}
+
 /**
  * @brief ADC read test.
  * 
@@ -40,11 +85,7 @@ constexpr double computeInputVoltage(const std::uint16_t adcVal) noexcept
 TEST(Adc_Atmega328p, Read)
 {
     // Set up the ADC.
-    utils::set(ADCSRA, ADIF);
-    adc::Interface& adc{adc::Atmega328p::getInstance()};
-
-     // Expect that the ADC was initialized successfully.
-    EXPECT_TRUE(adc.isInitialized());
+    adc::Interface& adc{setupAdc()};
 
     // Try 20 different pin numbers.
     constexpr std::uint8_t pinMax{20U};
@@ -84,4 +125,4 @@ TEST(Adc_Atmega328p, Read)
 } // namespace
 } // namespace driver
 
-#endif /** IFDEF TESTSUITE */
+#endif /** TESTSUITE */
